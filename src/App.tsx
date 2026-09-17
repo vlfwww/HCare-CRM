@@ -5,6 +5,7 @@ import { PatientProfilePage } from "./features/patient-profile/ui/PatientProfile
 import { MedicalStaffPage } from "./features/medical-staff/ui/MedicalStaffPage";
 import { Header } from "./widgets/Header";
 import { Sidebar } from "./widgets/Sidebar";
+import { FeedbackPage } from "./features/feedback/ui/FeedbackPage";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ function App() {
                 <Route path="/" element={<PatientProfilePage />} />
                 <Route path="/profile" element={<PatientProfilePage />} />
                 <Route path="/medical-staff" element={<MedicalStaffPage />} />
+                <Route path="/feedback" element={<FeedbackPage />} />
               </Routes>
             </main>
           </div>

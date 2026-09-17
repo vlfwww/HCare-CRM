@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { User, Users, X } from "lucide-react";
+import { MessageSquare, User, Users, X } from "lucide-react";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -12,6 +12,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const isProfile =
     location.pathname === "/" || location.pathname === "/profile";
   const isStaff = location.pathname === "/medical-staff";
+  const isFeedback = location.pathname === "/feedback";
 
   return (
     <>
@@ -67,6 +68,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             >
               <Users className="w-5 h-5" />
               <span>Medical Staff</span>
+            </Link>
+
+            <Link
+              to="/feedback"
+              onClick={onClose}
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${
+                isFeedback
+                  ? "bg-emerald-50 text-emerald-600"
+                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              }`}
+            >
+              <MessageSquare className="w-5 h-5" />
+              <span>Feedback</span>
             </Link>
           </nav>
         </div>
