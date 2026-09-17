@@ -1,6 +1,6 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
-import { MessageSquare, User, Users, X } from "lucide-react";
+import { Link, useRouterState } from "@tanstack/react-router";
+import { User, Users, MessageSquare, X } from "lucide-react";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -8,11 +8,12 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
-  const location = useLocation();
-  const isProfile =
-    location.pathname === "/" || location.pathname === "/profile";
-  const isStaff = location.pathname === "/medical-staff";
-  const isFeedback = location.pathname === "/feedback";
+  const routerState = useRouterState();
+  const currentPath = routerState.location.pathname;
+
+  const isProfile = currentPath === "/" || currentPath === "/profile";
+  const isStaff = currentPath === "/medical-staff";
+  const isFeedback = currentPath === "/feedback";
 
   return (
     <>
@@ -32,7 +33,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           <span className="text-sm font-bold text-gray-800 uppercase tracking-wider">
-            Navigation
+            Menu
           </span>
           <button
             onClick={onClose}
@@ -54,7 +55,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               }`}
             >
               <User className="w-5 h-5" />
-              <span>Patient profile</span>
+              <span>Patient Profile</span>
             </Link>
 
             <Link
