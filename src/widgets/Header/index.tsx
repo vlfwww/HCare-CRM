@@ -1,6 +1,7 @@
 import React from "react";
 import { Menu, Bell } from "lucide-react";
 import logoImage from "../../assets/icons/logo.svg";
+import { Link } from "@tanstack/react-router";
 
 interface HeaderProps {
   onToggleSidebar: () => void;
@@ -17,12 +18,16 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
         >
           <Menu className="w-5 h-5" />
         </button>
-        <div className="flex items-center gap-2.5">
-          <img src={logoImage} alt="logo" />
-          <span className="text-lg font-semibold tracking-tight text-gray-800">
-            HCare
-          </span>
-        </div>
+
+        <Link
+          to="/"
+          className="flex items-center gap-2.5 font-bold text-gray-900 tracking-tight hover:opacity-80 transition-opacity"
+        >
+          <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <img src={logoImage} alt="logo" />
+          </div>
+          <span className="text-base">HCare</span>
+        </Link>
       </div>
 
       <div className="flex items-center gap-5">
