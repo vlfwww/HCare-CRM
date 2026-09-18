@@ -148,7 +148,7 @@ export const PatientProfilePage: React.FC = () => {
           </div>
 
           <div className="space-y-6">
-            <Activities activities={profileData.activities || []} />
+            <Activities userId={auth.currentUser?.uid || ""} />
             <InsuranceInfo
               memberId={profileData.insurance?.memberId || ""}
               provider={profileData.insurance?.provider || ""}
