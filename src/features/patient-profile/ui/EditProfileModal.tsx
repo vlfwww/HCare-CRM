@@ -18,9 +18,38 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const queryClient = useQueryClient();
 
+  const formatDateForInput = (dateStr: string) => {
+    if (!dateStr) return "";
+    if (dateStr.includes("-")) return dateStr;
+    const parts = dateStr.split("/");
+    if (parts.length === 3) {
+      return `${parts[2]}-${parts[1]}-${parts[0]}`;
+    }
+    return dateStr;
+  };
+
+  const formatDateForDisplay = (dateStr: string) => {
+    if (!dateStr) return "";
+    if (dateStr.includes("/")) return dateStr;
+    const parts = dateStr.split("-");
+    if (parts.length === 3) {
+      return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
+    return dateStr;
+  };
+
   useEffect(() => {
-    if (isOpen) {
-      setFormData(initialData || {});
+    if (isOpen && initialData) {
+      const formattedData = {
+        ...initialData,
+        personalInfo: {
+          ...initialData.personalInfo,
+          birthDate: formatDataForModalInit(
+            initialData.personalInfo?.birthDate,
+          ),
+        },
+      };
+      setFormData(formattedData);
       setErrors({});
       document.body.style.overflow = "hidden";
     } else {
@@ -30,6 +59,10 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
       document.body.style.overflow = "unset";
     };
   }, [isOpen, initialData]);
+
+  const formatDataForModalInit = (dateStr: string) => {
+    return formatDateForInput(dateStr);
+  };
 
   if (!isOpen) return null;
 
@@ -60,36 +93,6 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
         return newErrors;
       });
     }
-  };
-
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let rawValue = e.target.value.replace(/\D/g, "");
-    if (rawValue.length > 8) rawValue = rawValue.slice(0, 8);
-
-    let formatted = "";
-    if (rawValue.length > 0) {
-      formatted = rawValue.slice(0, 2);
-    }
-    if (rawValue.length >= 3) {
-      formatted += "/" + rawValue.slice(2, 4);
-    } else if (
-      rawValue.length === 2 &&
-      e.nativeEvent instanceof InputEvent &&
-      e.nativeEvent.inputType === "deleteContentBackward"
-    ) {
-      formatted = rawValue.slice(0, 1);
-    }
-    if (rawValue.length >= 5) {
-      formatted += "/" + rawValue.slice(4, 8);
-    } else if (
-      rawValue.length === 4 &&
-      e.nativeEvent instanceof InputEvent &&
-      e.nativeEvent.inputType === "deleteContentBackward"
-    ) {
-      formatted = rawValue.slice(0, 2) + "/" + rawValue.slice(2, 3);
-    }
-
-    handleChange("personalInfo", "birthDate", formatted);
   };
 
   const validate = () => {
@@ -127,28 +130,14 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
     if (!birthDate?.trim()) {
       newErrors.birthDate = "Field is required";
     } else {
-      const dateRegex = /^([0-2][0-9]|3[0-1])\/(0[1-9]|1[0-2])\/(\d{4})$/;
-      const match = birthDate.match(dateRegex);
+      const inputDate = new Date(birthDate);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
 
-      if (!match) {
-        newErrors.birthDate = "Invalid date format (DD/MM/YYYY)";
-      } else {
-        const day = parseInt(match[1], 10);
-        const month = parseInt(match[2], 10);
-        const year = parseInt(match[3], 10);
-
-        const daysInMonth = new Date(year, month, 0).getDate();
-        if (day > daysInMonth) {
-          newErrors.birthDate = `Invalid day for this month (max ${daysInMonth})`;
-        } else {
-          const inputDate = new Date(year, month - 1, day);
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-
-          if (inputDate > today) {
-            newErrors.birthDate = "Birth date cannot be in the future";
-          }
-        }
+      if (isNaN(inputDate.getTime())) {
+        newErrors.birthDate = "Invalid date format";
+      } else if (inputDate > today) {
+        newErrors.birthDate = "Birth date cannot be in the future";
       }
     }
 
@@ -171,8 +160,16 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
     if (!currentUser) return;
 
     try {
+      const dataToSave = {
+        ...formData,
+        personalInfo: {
+          ...formData.personalInfo,
+          birthDate: formatDateForDisplay(formData.personalInfo?.birthDate),
+        },
+      };
+
       const docRef = doc(db, "users", currentUser.uid);
-      await setDoc(docRef, formData, { merge: false });
+      await setDoc(docRef, dataToSave, { merge: false });
       queryClient.invalidateQueries({ queryKey: ["patient", currentUser.uid] });
       onClose();
     } catch (err) {
@@ -325,11 +322,11 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
                   Birth Date *
                 </label>
                 <input
-                  type="text"
-                  maxLength={10}
-                  placeholder="DD/MM/YYYY"
+                  type="date"
                   value={formData.personalInfo?.birthDate || ""}
-                  onChange={handleDateChange}
+                  onChange={(e) =>
+                    handleChange("personalInfo", "birthDate", e.target.value)
+                  }
                   className={getInputClass("birthDate")}
                 />
                 {errors.birthDate && (
