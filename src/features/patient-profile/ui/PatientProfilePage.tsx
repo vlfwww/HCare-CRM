@@ -1,5 +1,5 @@
-import React from "react";
-import { usePatientData } from "../model/usePatientData";
+import React, { useState } from "react";
+import { auth } from "@/app/providers/firebase";
 import { PatientHeader } from "./PatientHeader";
 import { ContactInfo } from "./ContactInfo";
 import { PersonalInfo } from "./PersonalInfo";
@@ -9,9 +9,35 @@ import { AppointmentsCard } from "./AppointmentsCard";
 import { SurveysCard } from "./SurveysCard";
 import { FeedbackCard } from "./FeedbackCard";
 import { ContactPreferencesCard } from "./ContactPreferencesCard";
+import { EditProfileModal } from "./EditProfileModal";
+import { usePatientData } from "@/entities/patient/model/usePatientData";
+
+const calculateAge = (birthDateStr: string): number => {
+  if (!birthDateStr) return 0;
+  const parts = birthDateStr.split("/");
+  if (parts.length !== 3) return 0;
+
+  const day = parseInt(parts[0], 10);
+  const month = parseInt(parts[1], 10) - 1;
+  const year = parseInt(parts[2], 10);
+
+  const birthDate = new Date(year, month, day);
+  const today = new Date();
+
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const m = today.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age >= 0 ? age : 0;
+};
 
 export const PatientProfilePage: React.FC = () => {
   const { data, isLoading, error } = usePatientData();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
 
   if (isLoading) {
     return (
@@ -21,7 +47,7 @@ export const PatientProfilePage: React.FC = () => {
     );
   }
 
-  if (error || !data) {
+  if (error) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <p className="text-red-500 font-medium">Failed to load patient data.</p>
@@ -29,14 +55,66 @@ export const PatientProfilePage: React.FC = () => {
     );
   }
 
+  const fullNameValue =
+    data?.fullName || auth.currentUser?.displayName || "New Patient";
+
+  const getInitialsSvg = (name: string) => {
+    const initials = name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+    return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150"><rect width="100%" height="100%" fill="%23059669"/><text x="50%" y="50%" dominant-baseline="central" text-anchor="middle" fill="white" font-family="sans-serif" font-size="50" font-weight="bold">${initials}</text></svg>`;
+  };
+
+  const rawProfileData = data || {
+    fullName: fullNameValue,
+    role: "Patient",
+    avatarUrl: getInitialsSvg(fullNameValue),
+    contactInfo: { phone: "", homePhone: "", address: "", email: "" },
+    personalInfo: {
+      gender: "",
+      birthDate: "",
+      age: 0,
+      patientId: "",
+      nationality: "",
+      maritalStatus: "",
+      emergencyContact: "",
+    },
+    insurance: { memberId: "", provider: "" },
+    appointments: [],
+    activities: [],
+  };
+
+  const profileData: any = {
+    ...rawProfileData,
+    personalInfo: {
+      ...rawProfileData.personalInfo,
+      age: calculateAge(rawProfileData.personalInfo?.birthDate),
+    },
+  };
+
+  if (profileData && !profileData.avatarUrl) {
+    profileData.avatarUrl = getInitialsSvg(profileData.fullName || "User");
+  }
+
   return (
-    <div className="max-w-[1400px] mx-auto px-6 py-6 font-manrope">
+    <div className="max-w-[1400px] mx-auto px-6 py-6 font-manrope relative">
       <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
-        <PatientHeader
-          fullName={data.fullName}
-          role={data.role}
-          avatarUrl={data.avatarUrl}
-        />
+        <div className="flex justify-between items-center mb-4">
+          <PatientHeader
+            fullName={profileData.fullName}
+            role={profileData.role}
+            avatarUrl={profileData.avatarUrl}
+          />
+          <button
+            onClick={handleOpenModal}
+            className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors shadow-sm"
+          >
+            {data ? "Edit Profile" : "Complete Profile!"}
+          </button>
+        </div>
 
         <div className="flex gap-8 border-b border-gray-100 mb-8 pb-1">
           <button className="pb-3 text-emerald-600 font-semibold border-b-2 border-emerald-500 -mb-[5px]">
@@ -58,26 +136,40 @@ export const PatientProfilePage: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="space-y-6">
-            <ContactInfo data={data.contactInfo} />
-            <PersonalInfo data={data.personalInfo} />
-          </div>
-
-          <div className="space-y-6">
-            <Activities />
-            <InsuranceInfo
-              memberId={data.insurance.memberId}
-              provider={data.insurance.provider}
+            <ContactInfo
+              data={profileData.contactInfo}
+              fullName={profileData.fullName}
+              onEdit={handleOpenModal}
+            />
+            <PersonalInfo
+              data={profileData.personalInfo}
+              onEdit={handleOpenModal}
             />
           </div>
 
           <div className="space-y-6">
-            <AppointmentsCard appointments={data.appointments} />
+            <Activities activities={profileData.activities || []} />
+            <InsuranceInfo
+              memberId={profileData.insurance?.memberId || ""}
+              provider={profileData.insurance?.provider || ""}
+              onEdit={handleOpenModal}
+            />
+          </div>
+
+          <div className="space-y-6">
+            <AppointmentsCard appointments={profileData.appointments || []} />
             <SurveysCard />
             <FeedbackCard />
             <ContactPreferencesCard />
           </div>
         </div>
       </div>
+
+      <EditProfileModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        initialData={profileData}
+      />
     </div>
   );
 };
