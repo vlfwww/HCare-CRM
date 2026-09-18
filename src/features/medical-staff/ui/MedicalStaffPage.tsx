@@ -1,9 +1,11 @@
 import React from "react";
-import { SlidersHorizontal } from "lucide-react";
-import { mockStaff } from "../../../entities/staff/api/mockStaff";
-import { StaffRow } from "../../../entities/staff/ui/StaffRow";
+import { SlidersHorizontal, Loader2, AlertCircle } from "lucide-react";
+import { StaffRow } from "@/entities/staff/ui/StaffRow";
+import { useStaffQuery } from "../model/useStaffQuery";
 
 export const MedicalStaffPage: React.FC = () => {
+  const { data: staffList, isLoading, isError } = useStaffQuery();
+
   return (
     <div className="max-w-[1400px] mx-auto px-6 py-6 font-manrope">
       <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-xs">
@@ -30,9 +32,48 @@ export const MedicalStaffPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {mockStaff.map((person) => (
-                  <StaffRow key={person.id} person={person} />
-                ))}
+                {isLoading && (
+                  <tr>
+                    <td colSpan={5} className="py-12 text-center text-gray-400">
+                      <div className="flex items-center justify-center gap-2">
+                        <Loader2 className="w-5 h-5 animate-spin text-emerald-500" />
+                        <span>Loading staff from Firebase...</span>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+
+                {isError && (
+                  <tr>
+                    <td colSpan={5} className="py-12 text-center text-red-500">
+                      <div className="flex items-center justify-center gap-2">
+                        <AlertCircle className="w-5 h-5" />
+                        <span>Failed to load medical staff data.</span>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+
+                {!isLoading &&
+                  !isError &&
+                  staffList &&
+                  staffList.length > 0 &&
+                  staffList.map((person) => (
+                    <StaffRow key={person.id} person={person} />
+                  ))}
+
+                {!isLoading &&
+                  !isError &&
+                  (!staffList || staffList.length === 0) && (
+                    <tr>
+                      <td
+                        colSpan={5}
+                        className="py-12 text-center text-gray-400 text-sm"
+                      >
+                        No medical staff found in database.
+                      </td>
+                    </tr>
+                  )}
               </tbody>
             </table>
           </div>

@@ -1,13 +1,13 @@
+import { FeedbackPage } from "@/features/feedback/ui/FeedbackPage";
+import { Home } from "@/features/home/ui/HomePage";
+import { MedicalStaffPage } from "@/features/medical-staff/ui/MedicalStaffPage";
+import { PatientProfilePage } from "@/features/patient-profile/ui/PatientProfilePage";
+import { RootLayout } from "@/widgets/Layout/RootLayout";
 import {
   createRootRoute,
   createRoute,
   createRouter,
 } from "@tanstack/react-router";
-import { RootLayout } from "../widgets/Layout/RootLayout";
-import { PatientProfilePage } from "../features/patient-profile/ui/PatientProfilePage";
-import { MedicalStaffPage } from "../features/medical-staff/ui/MedicalStaffPage";
-import { FeedbackPage } from "../features/feedback/ui/FeedbackPage";
-import { Home } from "../features/home/ui/HomePage";
 
 const rootRoute = createRootRoute({
   component: RootLayout,

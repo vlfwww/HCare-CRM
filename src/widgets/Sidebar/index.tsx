@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { User, Users, MessageSquare, X } from "lucide-react";
+import { User, Users, MessageSquare, X, Home } from "lucide-react";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -11,7 +11,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
 
-  const isProfile = currentPath === "/" || currentPath === "/profile";
+  const isHome = currentPath === "/";
+  const isProfile = currentPath === "/profile";
   const isStaff = currentPath === "/medical-staff";
   const isFeedback = currentPath === "/feedback";
 
@@ -47,6 +48,18 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           <nav className="space-y-1.5">
             <Link
               to="/"
+              onClick={onClose}
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${
+                isHome
+                  ? "bg-emerald-50 text-emerald-600"
+                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              }`}
+            >
+              <Home className="w-5 h-5" />
+              <span>Home</span>
+            </Link>
+            <Link
+              to="/profile"
               onClick={onClose}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${
                 isProfile
