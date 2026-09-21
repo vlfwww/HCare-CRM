@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { db } from "@/app/providers/firebase";
 import { doc, setDoc, arrayUnion } from "firebase/firestore";
 import type { AppointmentItem } from "./types";
@@ -9,6 +9,12 @@ export const useAppointments = (
 ) => {
   const [appointments, setAppointments] =
     useState<AppointmentItem[]>(initialAppointments);
+
+  useEffect(() => {
+    if (initialAppointments && initialAppointments.length > 0) {
+      setAppointments(initialAppointments);
+    }
+  }, [initialAppointments]);
 
   const addAppointmentToDb = async (newAppointment: AppointmentItem) => {
     if (!userId) return;
@@ -27,7 +33,7 @@ export const useAppointments = (
       setAppointments((prev) => [newAppointment, ...prev]);
     } catch (error) {
       console.error("Error saving appointment to Firestore:", error);
-      alert("Error saving appointment");
+      alert("Не удалось сохранить запись в базу данных.");
     }
   };
 
