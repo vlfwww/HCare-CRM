@@ -68,7 +68,7 @@ export const RatingScale: React.FC<RatingScaleProps> = ({
   onSelect,
 }) => {
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-2xs">
+    <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-2xs w-full">
       <h3 className="text-sm font-semibold text-gray-900 mb-6">{question}</h3>
 
       <div className="flex items-center justify-between gap-1 sm:gap-2 mb-3">
@@ -84,7 +84,7 @@ export const RatingScale: React.FC<RatingScaleProps> = ({
               className={`w-9 h-9 sm:w-11 sm:h-11 rounded-full flex items-center justify-center text-xs sm:text-sm font-semibold transition-all cursor-pointer border ${
                 isSelected
                   ? "bg-emerald-500 border-emerald-500 text-white shadow-md shadow-emerald-500/20 scale-105"
-                  : `${colors.border} ${colors.text} ${colors.hover} bg-white`
+                  : `${colors.border} ${colors.text}${colors.hover} bg-white`
               }`}
             >
               {num}

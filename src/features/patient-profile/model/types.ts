@@ -18,7 +18,7 @@ export interface AppointmentItem {
   time?: string;
   speciality?: string;
   specialty?: string;
-  status?: "Cancelled" | "Confirmed" | "Pending" | string;
+  status?: "Cancelled" | "Completed" | "Pending" | string;
   doctorName?: string;
   anamnesis?: string;
 }

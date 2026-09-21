@@ -5,7 +5,6 @@ import { ContactInfo } from "../components/profile-info-block/ui/ContactInfo";
 import { PersonalInfo } from "../components/profile-info-block/ui/PersonalInfo";
 import { Activities } from "../components/activities-block/ui/Activities";
 import { SurveysCard } from "../components/surveys-block/ui/SurveysCard";
-import { FeedbackCard } from "./FeedbackCard";
 import { ContactPreferencesCard } from "../components/profile-info-block/ui/ContactPreferencesCard";
 import { EditProfileModal } from "../components/profile-info-block/ui/EditProfileModal";
 import { usePatientData } from "@/entities/patient/model/usePatientData";
@@ -14,6 +13,8 @@ import { useSurveys } from "../components/surveys-block/model/useSurveys";
 import type { AppointmentItem } from "../model/types";
 import { InsuranceInfo } from "../components/profile-info-block/ui/InsuranceInfo";
 import { AppointmentsCard } from "../components/appointments-block/ui/AppointmentsCard";
+import { FeedbackCard } from "@/features/feedback/ui/FeedbackCard";
+import { useFeedback } from "@/features/feedback/model/useFeedback";
 
 const calculateAge = (birthDateStr: string): number => {
   if (!birthDateStr) return 0;
@@ -50,6 +51,8 @@ export const PatientProfilePage: React.FC = () => {
   );
 
   const { surveys, availableSurveys, addSurveyToDb } = useSurveys(userId);
+
+  const { feedbacks } = useFeedback(userId);
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
@@ -192,7 +195,7 @@ export const PatientProfilePage: React.FC = () => {
                 void addSurveyToDb(newSurvey);
               }}
             />
-            <FeedbackCard />
+            <FeedbackCard feedbacks={feedbacks} />
             <ContactPreferencesCard />
           </div>
         </div>
