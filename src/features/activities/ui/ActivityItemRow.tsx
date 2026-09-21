@@ -7,7 +7,7 @@ import {
   CheckCircle2,
   Check,
 } from "lucide-react";
-import type { ActivityItem } from "../../../model/types";
+import type { ActivityItem } from "../../patient-profile/model/types";
 
 const iconMap: Record<string, any> = {
   Mail,

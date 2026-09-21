@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { db } from "@/app/providers/firebase";
 import { doc, setDoc, arrayUnion } from "firebase/firestore";
-import type { AppointmentItem } from "../../../model/types";
+import type { AppointmentItem } from "../../patient-profile/model/types";
 
 export const useAppointments = (
   userId: string,

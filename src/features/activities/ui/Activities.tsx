@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Link2, Search, Plus, X } from "lucide-react";
-import { ActionButton } from "../../../../../shared/ui/ActionButton";
+import { ActionButton } from "../../../shared/ui/ActionButton";
 import { useActivities } from "../model/useActivities";
 import { ActivityItemRow } from "./ActivityItemRow";
 import { ActivityTabs } from "./ActivityTabs";

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import type { SurveyItem } from "../../../model/types";
+import type { SurveyItem } from "../../patient-profile/model/types";
 import { db } from "@/app/providers/firebase";
 import { collection, addDoc, onSnapshot, query } from "firebase/firestore";
 

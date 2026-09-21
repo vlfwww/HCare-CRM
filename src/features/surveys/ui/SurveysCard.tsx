@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Plus } from "lucide-react";
-import { ActionButton } from "../../../../../shared/ui/ActionButton";
+import { ActionButton } from "../../../shared/ui/ActionButton";
 import { SurveyBookingModal } from "./SurveyBookingModal";
-import type { SurveyItem } from "../../../model/types";
+import type { SurveyItem } from "../../patient-profile/model/types";
 
 interface SurveysCardProps {
   userId: string;

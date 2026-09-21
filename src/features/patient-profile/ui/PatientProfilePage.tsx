@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 import { auth } from "@/app/providers/firebase";
 import { PatientHeader } from "./PatientHeader";
-import { ContactInfo } from "../components/profile-info-block/ui/ContactInfo";
-import { PersonalInfo } from "../components/profile-info-block/ui/PersonalInfo";
-import { Activities } from "../components/activities-block/ui/Activities";
-import { SurveysCard } from "../components/surveys-block/ui/SurveysCard";
-import { ContactPreferencesCard } from "../components/profile-info-block/ui/ContactPreferencesCard";
-import { EditProfileModal } from "../components/profile-info-block/ui/EditProfileModal";
+import { ContactInfo } from "../../profile-info/ui/ContactInfo";
+import { PersonalInfo } from "../../profile-info/ui/PersonalInfo";
+import { Activities } from "../../activities/ui/Activities";
+import { SurveysCard } from "../../surveys/ui/SurveysCard";
+import { ContactPreferencesCard } from "../../profile-info/ui/ContactPreferencesCard";
+import { EditProfileModal } from "../../profile-info/ui/EditProfileModal";
 import { usePatientData } from "@/entities/patient/model/usePatientData";
-import { useAppointments } from "../components/appointments-block/model/useAppointments";
-import { useSurveys } from "../components/surveys-block/model/useSurveys";
+import { useAppointments } from "../../appointments/model/useAppointments";
+import { useSurveys } from "../../surveys/model/useSurveys";
 import type { AppointmentItem } from "../model/types";
-import { InsuranceInfo } from "../components/profile-info-block/ui/InsuranceInfo";
-import { AppointmentsCard } from "../components/appointments-block/ui/AppointmentsCard";
+import { InsuranceInfo } from "../../profile-info/ui/InsuranceInfo";
+import { AppointmentsCard } from "../../appointments/ui/AppointmentsCard";
 import { FeedbackCard } from "@/features/feedback/ui/FeedbackCard";
 import { useFeedback } from "@/features/feedback/model/useFeedback";
 

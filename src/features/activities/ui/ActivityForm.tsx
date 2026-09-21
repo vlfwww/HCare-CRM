@@ -1,6 +1,6 @@
 import React from "react";
 import { Link2 } from "lucide-react";
-import type { ActivityType } from "../../../model/types";
+import type { ActivityType } from "../../patient-profile/model/types";
 
 interface ActivityFormProps {
   activeTab: ActivityType;
