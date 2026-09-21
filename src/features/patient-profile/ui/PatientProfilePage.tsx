@@ -1,61 +1,31 @@
-import React, { useState } from "react";
-import { auth } from "@/app/providers/firebase";
+import React from "react";
 import { PatientHeader } from "./PatientHeader";
-import { ContactInfo } from "../../profile-info/ui/ContactInfo";
+import { ContactInfo } from "../../contact-info/ui/ContactInfo";
 import { PersonalInfo } from "../../profile-info/ui/PersonalInfo";
 import { Activities } from "../../activities/ui/Activities";
 import { SurveysCard } from "../../surveys/ui/SurveysCard";
-import { ContactPreferencesCard } from "../../profile-info/ui/ContactPreferencesCard";
-import { EditProfileModal } from "../../profile-info/ui/EditProfileModal";
-import { usePatientData } from "@/entities/patient/model/usePatientData";
-import { useAppointments } from "../../appointments/model/useAppointments";
-import { useSurveys } from "../../surveys/model/useSurveys";
-import type { AppointmentItem } from "../model/types";
-import { InsuranceInfo } from "../../profile-info/ui/InsuranceInfo";
+import { ContactPreferencesCard } from "../../contact-preferences/ui/ContactPreferencesCard";
+import { EditProfileModal } from "../../edit-profile/ui/EditProfileModal";
+import { InsuranceInfo } from "../../insurance-info/ui/InsuranceInfo";
 import { AppointmentsCard } from "../../appointments/ui/AppointmentsCard";
 import { FeedbackCard } from "@/features/feedback/ui/FeedbackCard";
-import { useFeedback } from "@/features/feedback/model/useFeedback";
-
-const calculateAge = (birthDateStr: string): number => {
-  if (!birthDateStr) return 0;
-  const parts = birthDateStr.split("/");
-  if (parts.length !== 3) return 0;
-
-  const day = parseInt(parts[0], 10);
-  const month = parseInt(parts[1], 10) - 1;
-  const year = parseInt(parts[2], 10);
-
-  const birthDate = new Date(year, month, day);
-  const today = new Date();
-
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const m = today.getMonth() - birthDate.getMonth();
-  if (m < 0 || (m === 0 && today.getDate() - birthDate.getDate() < 0)) {
-    age--;
-  }
-  return age >= 0 ? age : 0;
-};
+import { usePatientProfile } from "../model/usePatientProfile";
 
 export const PatientProfilePage: React.FC = () => {
-  const { data, isLoading, error } = usePatientData();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const userId = auth.currentUser?.uid || "";
-
-  const initialAppointments: AppointmentItem[] = (data?.appointments ||
-    []) as unknown as AppointmentItem[];
-
-  const { appointments, addAppointmentToDb } = useAppointments(
+  const {
     userId,
-    initialAppointments,
-  );
-
-  const { surveys, availableSurveys, addSurveyToDb } = useSurveys(userId);
-
-  const { feedbacks } = useFeedback(userId);
-
-  const handleOpenModal = () => setIsModalOpen(true);
-  const handleCloseModal = () => setIsModalOpen(false);
+    data,
+    isLoading,
+    error,
+    isModalOpen,
+    profileData,
+    availableSurveys,
+    feedbacks,
+    handleOpenModal,
+    handleCloseModal,
+    addAppointmentToDb,
+    addSurveyToDb,
+  } = usePatientProfile();
 
   if (isLoading) {
     return (
@@ -71,51 +41,6 @@ export const PatientProfilePage: React.FC = () => {
         <p className="text-red-500 font-medium">Failed to load patient data.</p>
       </div>
     );
-  }
-
-  const fullNameValue =
-    data?.fullName || auth.currentUser?.displayName || "New Patient";
-
-  const getInitialsSvg = (name: string) => {
-    const initials = name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
-    return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150"><rect width="100%" height="100%" fill="%23059669"/><text x="50%" y="50%" dominant-baseline="central" text-anchor="middle" fill="white" font-family="sans-serif" font-size="50" font-weight="bold">${initials}</text></svg>`;
-  };
-
-  const rawProfileData = data || {
-    fullName: fullNameValue,
-    role: "Patient",
-    avatarUrl: getInitialsSvg(fullNameValue),
-    contactInfo: { phone: "", homePhone: "", address: "", email: "" },
-    personalInfo: {
-      gender: "",
-      birthDate: "",
-      age: 0,
-      patientId: "",
-      nationality: "",
-      maritalStatus: "",
-      emergencyContact: "",
-    },
-    insurance: { memberId: "", provider: "" },
-    activities: [],
-  };
-
-  const profileData = {
-    ...rawProfileData,
-    appointments,
-    surveys,
-    personalInfo: {
-      ...rawProfileData.personalInfo,
-      age: calculateAge(rawProfileData.personalInfo?.birthDate),
-    },
-  };
-
-  if (profileData && !profileData.avatarUrl) {
-    profileData.avatarUrl = getInitialsSvg(profileData.fullName || "User");
   }
 
   return (
@@ -158,12 +83,8 @@ export const PatientProfilePage: React.FC = () => {
             <ContactInfo
               data={profileData.contactInfo}
               fullName={profileData.fullName}
-              onEdit={handleOpenModal}
             />
-            <PersonalInfo
-              data={profileData.personalInfo}
-              onEdit={handleOpenModal}
-            />
+            <PersonalInfo data={profileData.personalInfo} />
           </div>
 
           <div className="space-y-6">
