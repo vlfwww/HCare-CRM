@@ -22,3 +22,10 @@ export interface AppointmentItem {
   doctorName?: string;
   anamnesis?: string;
 }
+
+export interface SurveyItem {
+  id: string;
+  title: string;
+  completedDate: string;
+  details?: string;
+}

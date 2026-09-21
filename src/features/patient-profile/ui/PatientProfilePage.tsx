@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { auth } from "@/app/providers/firebase";
 import { PatientHeader } from "./PatientHeader";
 import { ContactInfo } from "./ContactInfo";
@@ -12,6 +12,7 @@ import { ContactPreferencesCard } from "./ContactPreferencesCard";
 import { EditProfileModal } from "./EditProfileModal";
 import { usePatientData } from "@/entities/patient/model/usePatientData";
 import { useAppointments } from "../model/useAppointments";
+import { useSurveys } from "../model/useSurveys";
 import type { AppointmentItem } from "../model/types";
 
 const calculateAge = (birthDateStr: string): number => {
@@ -48,10 +49,7 @@ export const PatientProfilePage: React.FC = () => {
     initialAppointments,
   );
 
-  useEffect(() => {
-    if (data?.appointments) {
-    }
-  }, [data]);
+  const { surveys, availableSurveys, addSurveyToDb } = useSurveys(userId);
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
@@ -106,6 +104,7 @@ export const PatientProfilePage: React.FC = () => {
   const profileData = {
     ...rawProfileData,
     appointments,
+    surveys,
     personalInfo: {
       ...rawProfileData.personalInfo,
       age: calculateAge(rawProfileData.personalInfo?.birthDate),
@@ -127,26 +126,26 @@ export const PatientProfilePage: React.FC = () => {
           />
           <button
             onClick={handleOpenModal}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors shadow-sm"
+            className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors shadow-sm cursor-pointer"
           >
             {data ? "Edit Profile" : "Complete Profile!"}
           </button>
         </div>
 
         <div className="flex gap-8 border-b border-gray-100 mb-8 pb-1">
-          <button className="pb-3 text-emerald-600 font-semibold border-b-2 border-emerald-500 -mb-[5px]">
+          <button className="pb-3 text-emerald-600 font-semibold border-b-2 border-emerald-500 -mb-[5px] cursor-pointer">
             Summary
           </button>
-          <button className="pb-3 text-gray-400 hover:text-gray-700 transition-colors font-medium">
+          <button className="pb-3 text-gray-400 hover:text-gray-700 transition-colors font-medium cursor-pointer">
             Care plan
           </button>
-          <button className="pb-3 text-gray-400 hover:text-gray-700 transition-colors font-medium">
+          <button className="pb-3 text-gray-400 hover:text-gray-700 transition-colors font-medium cursor-pointer">
             Lab results
           </button>
-          <button className="pb-3 text-gray-400 hover:text-gray-700 transition-colors font-medium">
+          <button className="pb-3 text-gray-400 hover:text-gray-700 transition-colors font-medium cursor-pointer">
             PGHD
           </button>
-          <button className="pb-3 text-gray-400 hover:text-gray-700 transition-colors font-medium">
+          <button className="pb-3 text-gray-400 hover:text-gray-700 transition-colors font-medium cursor-pointer">
             Prescriptions
           </button>
         </div>
@@ -185,7 +184,14 @@ export const PatientProfilePage: React.FC = () => {
                 );
               }}
             />
-            <SurveysCard />
+            <SurveysCard
+              userId={userId}
+              surveys={profileData.surveys}
+              availableSurveys={availableSurveys}
+              onSurveyCreated={(newSurvey) => {
+                void addSurveyToDb(newSurvey);
+              }}
+            />
             <FeedbackCard />
             <ContactPreferencesCard />
           </div>
