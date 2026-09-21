@@ -99,7 +99,7 @@ export const Activities: React.FC<ActivitiesProps> = ({ userId }) => {
             : "timeline",
       title: postText.trim(),
       prefix: "Added by ",
-      actor: "Dr. Smith",
+      actor: "patient",
       date: new Date().toLocaleDateString("en-US", {
         month: "short",
         day: "numeric",

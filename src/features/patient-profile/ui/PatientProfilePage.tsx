@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { auth } from "@/app/providers/firebase";
 import { PatientHeader } from "./PatientHeader";
 import { ContactInfo } from "./ContactInfo";
@@ -11,6 +11,8 @@ import { FeedbackCard } from "./FeedbackCard";
 import { ContactPreferencesCard } from "./ContactPreferencesCard";
 import { EditProfileModal } from "./EditProfileModal";
 import { usePatientData } from "@/entities/patient/model/usePatientData";
+import { useAppointments } from "../model/useAppointments";
+import type { AppointmentItem } from "../model/types";
 
 const calculateAge = (birthDateStr: string): number => {
   if (!birthDateStr) return 0;
@@ -26,7 +28,7 @@ const calculateAge = (birthDateStr: string): number => {
 
   let age = today.getFullYear() - birthDate.getFullYear();
   const m = today.getMonth() - birthDate.getMonth();
-  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+  if (m < 0 || (m === 0 && today.getDate() - birthDate.getDate() < 0)) {
     age--;
   }
   return age >= 0 ? age : 0;
@@ -35,6 +37,21 @@ const calculateAge = (birthDateStr: string): number => {
 export const PatientProfilePage: React.FC = () => {
   const { data, isLoading, error } = usePatientData();
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const userId = auth.currentUser?.uid || "";
+
+  const initialAppointments: AppointmentItem[] = (data?.appointments ||
+    []) as unknown as AppointmentItem[];
+
+  const { appointments, addAppointmentToDb } = useAppointments(
+    userId,
+    initialAppointments,
+  );
+
+  useEffect(() => {
+    if (data?.appointments) {
+    }
+  }, [data]);
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
@@ -83,12 +100,12 @@ export const PatientProfilePage: React.FC = () => {
       emergencyContact: "",
     },
     insurance: { memberId: "", provider: "" },
-    appointments: [],
     activities: [],
   };
 
-  const profileData: any = {
+  const profileData = {
     ...rawProfileData,
+    appointments,
     personalInfo: {
       ...rawProfileData.personalInfo,
       age: calculateAge(rawProfileData.personalInfo?.birthDate),
@@ -148,7 +165,7 @@ export const PatientProfilePage: React.FC = () => {
           </div>
 
           <div className="space-y-6">
-            <Activities userId={auth.currentUser?.uid || ""} />
+            <Activities userId={userId} />
             <InsuranceInfo
               memberId={profileData.insurance?.memberId || ""}
               provider={profileData.insurance?.provider || ""}
@@ -157,7 +174,17 @@ export const PatientProfilePage: React.FC = () => {
           </div>
 
           <div className="space-y-6">
-            <AppointmentsCard appointments={profileData.appointments || []} />
+            <AppointmentsCard
+              userId={userId}
+              patientName={profileData.fullName}
+              patientDob={profileData.personalInfo?.birthDate || ""}
+              appointments={profileData.appointments}
+              onAppointmentCreated={(newApp) => {
+                void addAppointmentToDb(
+                  newApp as unknown as Parameters<typeof addAppointmentToDb>[0],
+                );
+              }}
+            />
             <SurveysCard />
             <FeedbackCard />
             <ContactPreferencesCard />

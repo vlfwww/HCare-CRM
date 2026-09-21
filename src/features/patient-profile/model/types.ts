@@ -10,3 +10,15 @@ export interface ActivityItem {
   iconName?: string;
   completed?: boolean;
 }
+
+export interface AppointmentItem {
+  id: string;
+  startTime?: string;
+  date?: string;
+  time?: string;
+  speciality?: string;
+  specialty?: string;
+  status?: "Cancelled" | "Confirmed" | "Pending" | string;
+  doctorName?: string;
+  anamnesis?: string;
+}
