@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Edit2, Check, X } from "lucide-react";
-import { ActionButton } from "../../../shared/ui/ActionButton";
+import { ActionButton } from "../../../../../shared/ui/ActionButton";
 import { MissingFieldBadge } from "./MissingFieldBadge";
 import { doc, updateDoc } from "firebase/firestore";
 import { db, auth } from "@/app/providers/firebase";
@@ -323,4 +323,3 @@ export const ContactInfo: React.FC<ContactInfoProps> = ({
     </div>
   );
 };
-  

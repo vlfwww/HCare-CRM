@@ -1,19 +1,19 @@
 import React, { useState } from "react";
 import { auth } from "@/app/providers/firebase";
 import { PatientHeader } from "./PatientHeader";
-import { ContactInfo } from "./ContactInfo";
-import { PersonalInfo } from "./PersonalInfo";
-import { Activities } from "./Activities";
-import { InsuranceInfo } from "./InsuranceInfo";
-import { AppointmentsCard } from "./AppointmentsCard";
-import { SurveysCard } from "./SurveysCard";
+import { ContactInfo } from "../components/profile-info-block/ui/ContactInfo";
+import { PersonalInfo } from "../components/profile-info-block/ui/PersonalInfo";
+import { Activities } from "../components/activities-block/ui/Activities";
+import { SurveysCard } from "../components/surveys-block/ui/SurveysCard";
 import { FeedbackCard } from "./FeedbackCard";
-import { ContactPreferencesCard } from "./ContactPreferencesCard";
-import { EditProfileModal } from "./EditProfileModal";
+import { ContactPreferencesCard } from "../components/profile-info-block/ui/ContactPreferencesCard";
+import { EditProfileModal } from "../components/profile-info-block/ui/EditProfileModal";
 import { usePatientData } from "@/entities/patient/model/usePatientData";
-import { useAppointments } from "../model/useAppointments";
-import { useSurveys } from "../model/useSurveys";
+import { useAppointments } from "../components/appointments-block/model/useAppointments";
+import { useSurveys } from "../components/surveys-block/model/useSurveys";
 import type { AppointmentItem } from "../model/types";
+import { InsuranceInfo } from "../components/profile-info-block/ui/InsuranceInfo";
+import { AppointmentsCard } from "../components/appointments-block/ui/AppointmentsCard";
 
 const calculateAge = (birthDateStr: string): number => {
   if (!birthDateStr) return 0;

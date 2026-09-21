@@ -1,5 +1,5 @@
 import React from "react";
-import type { ActivityType } from "../model/types";
+import type { ActivityType } from "../../../model/types";
 
 interface ActivityTabsProps {
   activeTab: ActivityType;

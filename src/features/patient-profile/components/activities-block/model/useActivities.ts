@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import type { ActivityItem, ActivityType } from "./types";
+import type { ActivityItem, ActivityType } from "../../../model/types";
 import { db } from "@/app/providers/firebase";
 import {
   collection,

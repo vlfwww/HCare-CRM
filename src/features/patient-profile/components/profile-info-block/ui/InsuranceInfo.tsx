@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Edit2, Check, X } from "lucide-react";
-import { ActionButton } from "../../../shared/ui/ActionButton";
-import { MissingFieldBadge } from "./MissingFieldBadge";
 import { doc, updateDoc } from "firebase/firestore";
 import { db, auth } from "@/app/providers/firebase";
 import { useQueryClient } from "@tanstack/react-query";
+import { ActionButton } from "@/shared/ui/ActionButton";
+import { MissingFieldBadge } from "./MissingFieldBadge";
 
 interface InsuranceInfoProps {
   memberId: string;

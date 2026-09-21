@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Plus } from "lucide-react";
-import { ActionButton } from "../../../shared/ui/ActionButton";
+import { ActionButton } from "@/shared/ui/ActionButton";
 import { AppointmentModal } from "./AppointmentModal";
-import type { AppointmentItem } from "../model/types";
+import type { AppointmentItem } from "@/features/patient-profile/model/types";
 
 interface AppointmentsCardProps {
   userId: string;
