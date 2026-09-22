@@ -65,7 +65,7 @@ export const usePatientProfile = (targetUserId?: string) => {
 
   const rawProfileData = data || {
     fullName: fullNameValue,
-    role: isDoctor ? "Doctor" : "Patient",
+    role: "Patient",
     avatarUrl: "",
     contactInfo: { phone: "", homePhone: "", address: "", email: "" },
     personalInfo: {
@@ -84,7 +84,7 @@ export const usePatientProfile = (targetUserId?: string) => {
 
   const profileData = {
     ...rawProfileData,
-    role: isDoctor ? "Doctor" : "Patient",
+    role: rawProfileData.role || "Patient",
     appointments,
     surveys,
     carePlans: existingCarePlans,
