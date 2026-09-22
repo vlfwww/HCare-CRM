@@ -13,6 +13,7 @@ interface InsuranceInfoProps {
 export const InsuranceInfo: React.FC<InsuranceInfoProps> = ({
   memberId: initialMemberId,
   provider: initialProvider,
+  onEdit,
 }) => {
   const {
     isEditing,
@@ -27,32 +28,41 @@ export const InsuranceInfo: React.FC<InsuranceInfoProps> = ({
     handleProviderChange,
   } = useInsuranceInfo(initialMemberId, initialProvider);
 
+  const canEdit = Boolean(onEdit);
+
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm mt-6 font-manrope relative">
       <div className="flex items-center justify-between mb-6">
         <p className="text-lg font-semibold text-gray-800">Insurance Info</p>
 
-        {isEditing ? (
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handleSave}
-              disabled={isSaving}
-              className="p-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors flex items-center justify-center shadow-sm disabled:opacity-50"
-            >
-              <Check className="w-4 h-4" />
-            </button>
-            <button
-              onClick={handleCancel}
-              disabled={isSaving}
-              className="p-1.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg transition-colors flex items-center justify-center"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-        ) : (
-          <div onClick={() => setIsEditing(true)} className="cursor-pointer">
-            <ActionButton icon={Edit2} />
-          </div>
+        {canEdit && (
+          <>
+            {isEditing ? (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleSave}
+                  disabled={isSaving}
+                  className="p-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors flex items-center justify-center shadow-sm disabled:opacity-50 cursor-pointer"
+                >
+                  <Check className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={handleCancel}
+                  disabled={isSaving}
+                  className="p-1.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg transition-colors flex items-center justify-center cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <div
+                onClick={() => setIsEditing(true)}
+                className="cursor-pointer"
+              >
+                <ActionButton icon={Edit2} />
+              </div>
+            )}
+          </>
         )}
       </div>
 
@@ -60,7 +70,7 @@ export const InsuranceInfo: React.FC<InsuranceInfoProps> = ({
         <div>
           <p className="text-xs text-gray-400 font-medium flex items-center justify-between">
             <span>Member ID</span>
-            {!isEditing && !initialMemberId && (
+            {canEdit && !isEditing && !initialMemberId && (
               <MissingFieldBadge
                 fieldName="Insurance Member ID"
                 onOpenModal={() => setIsEditing(true)}
@@ -96,7 +106,7 @@ export const InsuranceInfo: React.FC<InsuranceInfoProps> = ({
         <div>
           <p className="text-xs text-gray-400 font-medium flex items-center justify-between">
             <span>Insurance Provider</span>
-            {!isEditing && !initialProvider && (
+            {canEdit && !isEditing && !initialProvider && (
               <MissingFieldBadge
                 fieldName="Insurance Provider"
                 onOpenModal={() => setIsEditing(true)}

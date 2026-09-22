@@ -60,6 +60,8 @@ export const PatientProfilePage: React.FC<PatientProfilePageProps> = ({
     { id: "prescriptions", label: "Prescriptions" },
   ];
 
+  const canEditProfile = !isDoctor;
+
   return (
     <div className="max-w-[1400px] mx-auto px-6 py-6 font-manrope relative">
       <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
@@ -69,12 +71,15 @@ export const PatientProfilePage: React.FC<PatientProfilePageProps> = ({
             role={profileData.role}
             avatarUrl={profileData.avatarUrl}
           />
-          <button
-            onClick={handleOpenModal}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors shadow-sm cursor-pointer"
-          >
-            {data ? "Edit Profile" : "Complete Profile!"}
-          </button>
+
+          {canEditProfile && (
+            <button
+              onClick={handleOpenModal}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors shadow-sm cursor-pointer"
+            >
+              {data ? "Edit Profile" : "Complete Profile!"}
+            </button>
+          )}
         </div>
 
         <div className="flex gap-8 border-b border-gray-100 mb-8 pb-1">
@@ -101,8 +106,8 @@ export const PatientProfilePage: React.FC<PatientProfilePageProps> = ({
             userId={userId}
             profileData={profileData}
             availableSurveys={availableSurveys}
-            feedbacks={feedbacks}
-            onEditProfile={handleOpenModal}
+            feedbacks={isDoctor ? [] : feedbacks}
+            onEditProfile={canEditProfile ? handleOpenModal : undefined}
             onAppointmentCreated={(newApp) => {
               void addAppointmentToDb(
                 newApp as unknown as Parameters<typeof addAppointmentToDb>[0],
@@ -129,11 +134,13 @@ export const PatientProfilePage: React.FC<PatientProfilePageProps> = ({
         {activeTab === "prescriptions" && <PrescriptionsTab />}
       </div>
 
-      <EditProfileModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        initialData={profileData}
-      />
+      {canEditProfile && (
+        <EditProfileModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          initialData={profileData}
+        />
+      )}
     </div>
   );
 };

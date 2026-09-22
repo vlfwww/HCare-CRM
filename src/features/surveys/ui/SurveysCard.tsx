@@ -8,7 +8,7 @@ interface SurveysCardProps {
   userId: string;
   surveys: SurveyItem[];
   availableSurveys: string[];
-  onSurveyCreated: (newSurvey: Omit<SurveyItem, "id">) => void;
+  onSurveyCreated?: (newSurvey: Omit<SurveyItem, "id">) => void;
 }
 
 export const SurveysCard: React.FC<SurveysCardProps> = ({
@@ -18,16 +18,21 @@ export const SurveysCard: React.FC<SurveysCardProps> = ({
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const canCreate = Boolean(onSurveyCreated);
+
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm font-manrope overflow-hidden relative">
       <div className="flex items-center justify-between px-6 py-5">
         <p className="text-lg font-semibold text-gray-800">Surveys</p>
-        <div
-          onClick={() => setIsModalOpen(true)}
-          className="cursor-pointer focus:outline-none bg-transparent border-none p-0"
-        >
-          <ActionButton icon={Plus} />
-        </div>
+
+        {canCreate && (
+          <div
+            onClick={() => setIsModalOpen(true)}
+            className="cursor-pointer focus:outline-none bg-transparent border-none p-0"
+          >
+            <ActionButton icon={Plus} />
+          </div>
+        )}
       </div>
 
       <div className="overflow-x-auto">
@@ -64,12 +69,14 @@ export const SurveysCard: React.FC<SurveysCardProps> = ({
         </table>
       </div>
 
-      <SurveyBookingModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        availableSurveys={availableSurveys}
-        onSurveyCreated={onSurveyCreated}
-      />
+      {canCreate && (
+        <SurveyBookingModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          availableSurveys={availableSurveys}
+          onSurveyCreated={onSurveyCreated!}
+        />
+      )}
     </div>
   );
 };

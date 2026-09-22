@@ -13,7 +13,7 @@ interface SummaryTabProps {
   profileData: any;
   availableSurveys: any[];
   feedbacks: any[];
-  onEditProfile: () => void;
+  onEditProfile?: () => void;
   onAppointmentCreated: (newApp: any) => void;
   onSurveyCreated: (newSurvey: any) => void;
 }
@@ -27,6 +27,8 @@ export const SummaryTab: React.FC<SummaryTabProps> = ({
   onAppointmentCreated,
   onSurveyCreated,
 }) => {
+  const isDoctorView = feedbacks.length === 0 && !onEditProfile;
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="space-y-6">
@@ -52,16 +54,20 @@ export const SummaryTab: React.FC<SummaryTabProps> = ({
           patientName={profileData.fullName}
           patientDob={profileData.personalInfo?.birthDate || ""}
           appointments={profileData.appointments}
-          onAppointmentCreated={onAppointmentCreated}
+          onAppointmentCreated={isDoctorView ? undefined : onAppointmentCreated}
         />
         <SurveysCard
           userId={userId}
           surveys={profileData.surveys}
           availableSurveys={availableSurveys}
-          onSurveyCreated={onSurveyCreated}
+          onSurveyCreated={isDoctorView ? undefined : onSurveyCreated}
         />
-        <FeedbackCard feedbacks={feedbacks} />
-        <ContactPreferencesCard />
+        {!isDoctorView && (
+          <>
+            <FeedbackCard feedbacks={feedbacks} />
+            <ContactPreferencesCard />
+          </>
+        )}
       </div>
     </div>
   );

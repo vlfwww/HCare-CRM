@@ -21,16 +21,21 @@ export const AppointmentsCard: React.FC<AppointmentsCardProps> = ({
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const canCreate = Boolean(onAppointmentCreated);
+
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm font-manrope overflow-hidden relative">
       <div className="flex items-center justify-between px-6 py-5">
         <p className="text-lg font-semibold text-gray-800">Appointments</p>
-        <div
-          onClick={() => setIsModalOpen(true)}
-          className="cursor-pointer focus:outline-none bg-transparent border-none p-0"
-        >
-          <ActionButton icon={Plus} />
-        </div>
+
+        {canCreate && (
+          <div
+            onClick={() => setIsModalOpen(true)}
+            className="cursor-pointer focus:outline-none bg-transparent border-none p-0"
+          >
+            <ActionButton icon={Plus} />
+          </div>
+        )}
       </div>
 
       <div className="overflow-x-auto pb-4">
@@ -99,18 +104,20 @@ export const AppointmentsCard: React.FC<AppointmentsCardProps> = ({
         )}
       </div>
 
-      <AppointmentModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        userId={userId}
-        patientName={patientName}
-        patientDob={patientDob}
-        onAppointmentCreated={(newApp) => {
-          if (onAppointmentCreated) {
-            onAppointmentCreated(newApp);
-          }
-        }}
-      />
+      {canCreate && (
+        <AppointmentModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          userId={userId}
+          patientName={patientName}
+          patientDob={patientDob}
+          onAppointmentCreated={(newApp) => {
+            if (onAppointmentCreated) {
+              onAppointmentCreated(newApp);
+            }
+          }}
+        />
+      )}
     </div>
   );
 };
