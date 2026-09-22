@@ -14,14 +14,26 @@ export const CarePlanTab: React.FC<CarePlanTabProps> = ({
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim()) return;
+    setIsSubmitted(true);
+
+    if (!title.trim() || !description.trim()) return;
+
     onAddCarePlan({ title, description });
     setTitle("");
     setDescription("");
+    setIsSubmitted(false);
     setIsFormOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsFormOpen(false);
+    setTitle("");
+    setDescription("");
+    setIsSubmitted(false);
   };
 
   return (
@@ -30,7 +42,7 @@ export const CarePlanTab: React.FC<CarePlanTabProps> = ({
         <h3 className="text-lg font-bold text-gray-800">Patient Care Plan</h3>
         {isDoctor && (
           <button
-            onClick={() => setIsFormOpen(!isFormOpen)}
+            onClick={() => (isFormOpen ? handleCancel() : setIsFormOpen(true))}
             className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors shadow-sm cursor-pointer"
           >
             {isFormOpen ? "Cancel" : "+ Add Care Plan"}
@@ -42,35 +54,56 @@ export const CarePlanTab: React.FC<CarePlanTabProps> = ({
         <form
           onSubmit={handleSubmit}
           className="bg-gray-50 p-6 rounded-xl border border-gray-200 space-y-4"
+          noValidate
         >
           <h4 className="font-semibold text-gray-700 text-sm">
             Create New Care Plan Item
           </h4>
+
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1">
-              Title
+              Title <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g., Post-surgery recovery routine"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-emerald-500 bg-white"
-              required
+              className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none bg-white ${
+                isSubmitted && !title.trim()
+                  ? "border-red-500 focus:border-red-500"
+                  : "border-gray-300 focus:border-emerald-500"
+              }`}
             />
+            {isSubmitted && !title.trim() && (
+              <p className="text-red-500 text-xs mt-1">
+                This field is required
+              </p>
+            )}
           </div>
+
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1">
-              Description / Instructions
+              Description / Instructions <span className="text-red-500">*</span>
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Enter detailed instructions..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-emerald-500 bg-white"
+              className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none bg-white ${
+                isSubmitted && !description.trim()
+                  ? "border-red-500 focus:border-red-500"
+                  : "border-gray-300 focus:border-emerald-500"
+              }`}
               rows={3}
             />
+            {isSubmitted && !description.trim() && (
+              <p className="text-red-500 text-xs mt-1">
+                This field is required
+              </p>
+            )}
           </div>
+
           <button
             type="submit"
             className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors cursor-pointer"

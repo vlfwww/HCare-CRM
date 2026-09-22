@@ -1,11 +1,18 @@
-import { useState } from "react";
-import { auth } from "@/app/providers/firebase";
+import { useState, useEffect } from "react";
+import { auth, db } from "@/app/providers/firebase";
+import { doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { usePatientData } from "@/entities/patient/model/usePatientData";
 import { useAppointments } from "../../appointments/model/useAppointments";
 import { useSurveys } from "../../surveys/model/useSurveys";
 import { useFeedback } from "@/features/feedback/model/useFeedback";
 import type { AppointmentItem } from "../model/types";
 import { useAuth } from "@/shared/lib/useAuth";
+
+interface CarePlanItem {
+  title: string;
+  description: string;
+  createdAt?: string;
+}
 
 function calculateAge(birthDateString?: string): number {
   if (!birthDateString) return 0;
@@ -33,6 +40,14 @@ export const usePatientProfile = (targetUserId?: string) => {
   const { data, isLoading: dataLoading, error } = usePatientData(targetUserId);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [carePlans, setCarePlans] = useState<CarePlanItem[]>([]);
+
+  useEffect(() => {
+    if (data?.carePlans) {
+      setCarePlans(data.carePlans);
+    }
+  }, [data?.carePlans]);
+
   const initialAppointments: AppointmentItem[] = (data?.appointments ||
     []) as unknown as AppointmentItem[];
 
@@ -48,10 +63,27 @@ export const usePatientProfile = (targetUserId?: string) => {
     title: string;
     description: string;
   }) => {
+    if (!userId) return;
+
+    const newPlan: CarePlanItem = {
+      title: carePlanData.title,
+      description: carePlanData.description,
+      createdAt: new Date().toISOString(),
+    };
+
+    setCarePlans((prev) => [...prev, newPlan]);
+
     try {
-      console.log("Saving care plan as Doctor for user:", userId, carePlanData);
+      const patientRef = doc(db, "users", userId);
+      await updateDoc(patientRef, {
+        carePlans: arrayUnion(newPlan),
+      });
+      console.log("Care plan successfully saved to database for user:", userId);
     } catch (err) {
-      console.error("Failed to save care plan", err);
+      console.error("Failed to save care plan to database", err);
+      if (data?.carePlans) {
+        setCarePlans(data.carePlans);
+      }
     }
   };
 
@@ -60,8 +92,6 @@ export const usePatientProfile = (targetUserId?: string) => {
 
   const fullNameValue =
     data?.fullName || auth.currentUser?.displayName || "New Patient";
-
-  const existingCarePlans = data?.carePlans || [];
 
   const rawProfileData = data || {
     fullName: fullNameValue,
@@ -87,7 +117,7 @@ export const usePatientProfile = (targetUserId?: string) => {
     role: rawProfileData.role || "Patient",
     appointments,
     surveys,
-    carePlans: existingCarePlans,
+    carePlans,
     personalInfo: {
       ...rawProfileData.personalInfo,
       age: calculateAge(rawProfileData.personalInfo?.birthDate),
