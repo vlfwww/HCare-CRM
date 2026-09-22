@@ -9,6 +9,7 @@ import { CarePlanTab } from "./tabs/CarePlanTab";
 import { LabResultsTab } from "./tabs/LabResultsTab";
 import { PghdTab } from "./tabs/PghdTab";
 import { PrescriptionsTab } from "./tabs/PrescriptionsTab";
+import { ChatTab } from "./tabs/ChatTab";
 
 interface PatientProfilePageProps {
   targetUserId?: string;
@@ -56,12 +57,13 @@ export const PatientProfilePage: React.FC<PatientProfilePageProps> = ({
     );
   }
 
-  const tabsConfig: { id: PatientTabType; label: string }[] = [
+  const tabsConfig: { id: PatientTabType | "chat"; label: string }[] = [
     { id: "summary", label: "Summary" },
     { id: "care-plan", label: "Care plan" },
     { id: "lab-results", label: "Lab results" },
     { id: "pghd", label: "PGHD" },
     { id: "prescriptions", label: "Prescriptions" },
+    { id: "chat", label: "Support Chat" },
   ];
 
   const canEditProfile = !isDoctor;
@@ -86,14 +88,14 @@ export const PatientProfilePage: React.FC<PatientProfilePageProps> = ({
           )}
         </div>
 
-        <div className="flex gap-8 border-b border-gray-100 mb-8 pb-1">
+        <div className="flex flex-wrap gap-8 border-b border-gray-100 mb-8 pb-1">
           {tabsConfig.map((tab) => {
             const isActive = activeTab === tab.id;
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`pb-3 transition-colors cursor-pointer font-medium text-sm ${
+                onClick={() => setActiveTab(tab.id as PatientTabType)}
+                className={`pb-3 transition-colors cursor-pointer font-medium text-sm whitespace-nowrap ${
                   isActive
                     ? "text-emerald-600 font-semibold border-b-2 border-emerald-500 -mb-[5px]"
                     : "text-gray-400 hover:text-gray-700"
@@ -146,6 +148,7 @@ export const PatientProfilePage: React.FC<PatientProfilePageProps> = ({
         {activeTab === "pghd" && (
           <PghdTab userId={userId} pghdData={pghdData} />
         )}
+
         {activeTab === "prescriptions" && (
           <PrescriptionsTab
             userId={userId}
@@ -154,6 +157,8 @@ export const PatientProfilePage: React.FC<PatientProfilePageProps> = ({
             onAddPrescription={addPrescriptionToDb}
           />
         )}
+
+        {activeTab === ("chat" as PatientTabType) && <ChatTab />}
       </div>
 
       {canEditProfile && (
