@@ -2,6 +2,7 @@ import React from "react";
 import { SlidersHorizontal, Loader2, AlertCircle } from "lucide-react";
 import { StaffRow } from "@/features/medical-staff/ui/StaffRow";
 import { AppointmentModal } from "@/features/appointments/ui/AppointmentModal";
+import { FilterModal } from "@/features/medical-staff/ui/FilterModal";
 import { useMedicalStaff } from "../model/useMedicalStaff";
 
 export const MedicalStaffPage: React.FC = () => {
@@ -14,9 +15,17 @@ export const MedicalStaffPage: React.FC = () => {
     userId,
     patientName,
     patientDob,
+    isFilterModalOpen,
+    setIsFilterModalOpen,
+    selectedRole,
+    setSelectedRole,
+    selectedCity,
+    setSelectedCity,
+    availableRoles,
     handleOpenModalWithDoctor,
     handleCloseModal,
     handleAppointmentCreated,
+    handleResetFilters,
   } = useMedicalStaff();
 
   return (
@@ -26,9 +35,15 @@ export const MedicalStaffPage: React.FC = () => {
           <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
             Medical Staff
           </h1>
-          <button className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors bg-white cursor-pointer shadow-2xs">
+          <button
+            onClick={() => setIsFilterModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors bg-white cursor-pointer shadow-2xs"
+          >
             <SlidersHorizontal className="w-4 h-4 text-emerald-500" />
             <span>Filter</span>
+            {(selectedRole || selectedCity) && (
+              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+            )}
           </button>
         </div>
 
@@ -87,7 +102,7 @@ export const MedicalStaffPage: React.FC = () => {
                         colSpan={5}
                         className="py-12 text-center text-gray-400 text-sm"
                       >
-                        No medical staff found in database.
+                        No medical staff found matching your criteria.
                       </td>
                     </tr>
                   )}
@@ -105,6 +120,17 @@ export const MedicalStaffPage: React.FC = () => {
         patientDob={patientDob}
         initialDoctorId={selectedDoctorId}
         onAppointmentCreated={handleAppointmentCreated}
+      />
+
+      <FilterModal
+        isOpen={isFilterModalOpen}
+        onClose={() => setIsFilterModalOpen(false)}
+        selectedRole={selectedRole}
+        setSelectedRole={setSelectedRole}
+        selectedCity={selectedCity}
+        setSelectedCity={setSelectedCity}
+        availableRoles={availableRoles}
+        onReset={handleResetFilters}
       />
     </div>
   );

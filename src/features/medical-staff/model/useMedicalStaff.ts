@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { auth, db } from "@/app/providers/firebase";
 import { doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { useStaffQuery } from "./useStaffQuery";
@@ -8,6 +8,10 @@ export const useMedicalStaff = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDoctorId, setSelectedDoctorId] = useState<string>("");
+
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<string>("");
+  const [selectedCity, setSelectedCity] = useState<string>("");
 
   const userId = auth.currentUser?.uid || "";
   const [patientName, setPatientName] = useState("");
@@ -33,6 +37,23 @@ export const useMedicalStaff = () => {
     fetchPatientInfo();
   }, [userId]);
 
+  const filteredStaffList = useMemo(() => {
+    if (!staffList) return [];
+    return staffList.filter((person) => {
+      const matchesRole = selectedRole ? person.role === selectedRole : true;
+      const matchesCity = selectedCity
+        ? person.location?.includes(selectedCity) ||
+          person.hospital?.includes(selectedCity)
+        : true;
+      return matchesRole && matchesCity;
+    });
+  }, [staffList, selectedRole, selectedCity]);
+
+  const availableRoles = useMemo(() => {
+    if (!staffList) return [];
+    return Array.from(new Set(staffList.map((p) => p.role).filter(Boolean)));
+  }, [staffList]);
+
   const handleOpenModalWithDoctor = (doctorId: string) => {
     setSelectedDoctorId(doctorId);
     setIsModalOpen(true);
@@ -56,8 +77,13 @@ export const useMedicalStaff = () => {
     }
   };
 
+  const handleResetFilters = () => {
+    setSelectedRole("");
+    setSelectedCity("");
+  };
+
   return {
-    staffList,
+    staffList: filteredStaffList,
     isLoading,
     isError,
     isModalOpen,
@@ -65,8 +91,16 @@ export const useMedicalStaff = () => {
     userId,
     patientName,
     patientDob,
+    isFilterModalOpen,
+    setIsFilterModalOpen,
+    selectedRole,
+    setSelectedRole,
+    selectedCity,
+    setSelectedCity,
+    availableRoles,
     handleOpenModalWithDoctor,
     handleCloseModal,
     handleAppointmentCreated,
+    handleResetFilters,
   };
 };
