@@ -11,12 +11,14 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const routerState = useRouterState();
   const navigate = useNavigate();
-  const { user, loading } = useAuth();
+  const { user, isDoctor, loading } = useAuth();
 
   const currentPath = routerState.location.pathname;
 
   const isHome = currentPath === "/";
   const isProfile = currentPath === "/profile";
+  const isPatients =
+    currentPath === "/patients" || currentPath.startsWith("/patients/");
   const isStaff = currentPath === "/medical-staff";
   const isFeedback = currentPath === "/feedback";
 
@@ -73,6 +75,23 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               <span>Home</span>
             </Link>
 
+            {user && isDoctor && (
+              <Link
+                to="/patients"
+                onClick={(e) => handleProtectedClick(e, "/patients")}
+                className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${
+                  isPatients
+                    ? "bg-emerald-50 text-emerald-600"
+                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <Users className="w-5 h-5" />
+                  <span>Patients List</span>
+                </div>
+              </Link>
+            )}
+
             <Link
               to="/profile"
               onClick={(e) => handleProtectedClick(e, "/profile")}
@@ -84,42 +103,50 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             >
               <div className="flex items-center gap-3">
                 <User className="w-5 h-5" />
-                <span>Patient Profile</span>
+                <span>{isDoctor ? "My Dashboard" : "Patient Profile"}</span>
               </div>
               {!user && !loading && <Lock className="w-4 h-4 text-gray-400" />}
             </Link>
 
-            <Link
-              to="/medical-staff"
-              onClick={(e) => handleProtectedClick(e, "/medical-staff")}
-              className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${
-                isStaff
-                  ? "bg-emerald-50 text-emerald-600"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <Users className="w-5 h-5" />
-                <span>Medical Staff</span>
-              </div>
-              {!user && !loading && <Lock className="w-4 h-4 text-gray-400" />}
-            </Link>
+            {!isDoctor && (
+              <Link
+                to="/medical-staff"
+                onClick={(e) => handleProtectedClick(e, "/medical-staff")}
+                className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${
+                  isStaff
+                    ? "bg-emerald-50 text-emerald-600"
+                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <Users className="w-5 h-5" />
+                  <span>Medical Staff</span>
+                </div>
+                {!user && !loading && (
+                  <Lock className="w-4 h-4 text-gray-400" />
+                )}
+              </Link>
+            )}
 
-            <Link
-              to="/feedback"
-              onClick={(e) => handleProtectedClick(e, "/feedback")}
-              className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${
-                isFeedback
-                  ? "bg-emerald-50 text-emerald-600"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <MessageSquare className="w-5 h-5" />
-                <span>Feedback</span>
-              </div>
-              {!user && !loading && <Lock className="w-4 h-4 text-gray-400" />}
-            </Link>
+            {!isDoctor && (
+              <Link
+                to="/feedback"
+                onClick={(e) => handleProtectedClick(e, "/feedback")}
+                className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${
+                  isFeedback
+                    ? "bg-emerald-50 text-emerald-600"
+                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <MessageSquare className="w-5 h-5" />
+                  <span>Feedback</span>
+                </div>
+                {!user && !loading && (
+                  <Lock className="w-4 h-4 text-gray-400" />
+                )}
+              </Link>
+            )}
           </nav>
         </div>
 

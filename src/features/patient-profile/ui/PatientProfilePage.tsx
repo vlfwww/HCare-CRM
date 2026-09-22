@@ -10,7 +10,13 @@ import { LabResultsTab } from "./tabs/LabResultsTab";
 import { PghdTab } from "./tabs/PghdTab";
 import { PrescriptionsTab } from "./tabs/PrescriptionsTab";
 
-export const PatientProfilePage: React.FC = () => {
+interface PatientProfilePageProps {
+  targetUserId?: string;
+}
+
+export const PatientProfilePage: React.FC<PatientProfilePageProps> = ({
+  targetUserId,
+}) => {
   const {
     userId,
     data,
@@ -20,18 +26,20 @@ export const PatientProfilePage: React.FC = () => {
     profileData,
     availableSurveys,
     feedbacks,
+    isDoctor,
     handleOpenModal,
     handleCloseModal,
     addAppointmentToDb,
     addSurveyToDb,
-  } = usePatientProfile();
+    addCarePlanToDb,
+  } = usePatientProfile(targetUserId);
 
   const { activeTab, setActiveTab } = usePatientTabs();
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <p className="text-gray-500 font-medium">Loading patient profile...</p>
+        <p className="text-gray-500 font-medium">Loading profile...</p>
       </div>
     );
   }
@@ -39,7 +47,7 @@ export const PatientProfilePage: React.FC = () => {
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <p className="text-red-500 font-medium">Failed to load patient data.</p>
+        <p className="text-red-500 font-medium">Failed to load data.</p>
       </div>
     );
   }
@@ -106,7 +114,16 @@ export const PatientProfilePage: React.FC = () => {
           />
         )}
 
-        {activeTab === "care-plan" && <CarePlanTab />}
+        {activeTab === "care-plan" && (
+          <CarePlanTab
+            isDoctor={isDoctor}
+            carePlans={profileData.carePlans || []}
+            onAddCarePlan={(plan) => {
+              void addCarePlanToDb(plan);
+            }}
+          />
+        )}
+
         {activeTab === "lab-results" && <LabResultsTab />}
         {activeTab === "pghd" && <PghdTab />}
         {activeTab === "prescriptions" && <PrescriptionsTab />}

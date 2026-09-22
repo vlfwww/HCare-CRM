@@ -5,42 +5,33 @@ import { useAppointments } from "../../appointments/model/useAppointments";
 import { useSurveys } from "../../surveys/model/useSurveys";
 import { useFeedback } from "@/features/feedback/model/useFeedback";
 import type { AppointmentItem } from "../model/types";
+import { useAuth } from "@/shared/lib/useAuth";
 
-const calculateAge = (birthDateStr: string): number => {
-  if (!birthDateStr) return 0;
-  const parts = birthDateStr.split("/");
-  if (parts.length !== 3) return 0;
+function calculateAge(birthDateString?: string): number {
+  if (!birthDateString) return 0;
+  const parts = birthDateString.split("/");
+  const birthDate =
+    parts.length === 3
+      ? new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0]))
+      : new Date(birthDateString);
 
-  const day = parseInt(parts[0], 10);
-  const month = parseInt(parts[1], 10) - 1;
-  const year = parseInt(parts[2], 10);
+  if (isNaN(birthDate.getTime())) return 0;
 
-  const birthDate = new Date(year, month, day);
   const today = new Date();
-
   let age = today.getFullYear() - birthDate.getFullYear();
   const m = today.getMonth() - birthDate.getMonth();
-  if (m < 0 || (m === 0 && today.getDate() - birthDate.getDate() < 0)) {
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
     age--;
   }
-  return age >= 0 ? age : 0;
-};
+  return age;
+}
 
-const getInitialsSvg = (name: string) => {
-  const initials = name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
-  return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150"><rect width="100%" height="100%" fill="%23059669"/><text x="50%" y="50%" dominant-baseline="central" text-anchor="middle" fill="white" font-family="sans-serif" font-size="50" font-weight="bold">${initials}</text></svg>`;
-};
+export const usePatientProfile = (targetUserId?: string) => {
+  const { isDoctor, loading: authLoading } = useAuth();
+  const userId = targetUserId || auth.currentUser?.uid || "";
 
-export const usePatientProfile = () => {
-  const { data, isLoading, error } = usePatientData();
+  const { data, isLoading: dataLoading, error } = usePatientData(targetUserId);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const userId = auth.currentUser?.uid || "";
 
   const initialAppointments: AppointmentItem[] = (data?.appointments ||
     []) as unknown as AppointmentItem[];
@@ -53,16 +44,29 @@ export const usePatientProfile = () => {
   const { surveys, availableSurveys, addSurveyToDb } = useSurveys(userId);
   const { feedbacks } = useFeedback(userId);
 
+  const addCarePlanToDb = async (carePlanData: {
+    title: string;
+    description: string;
+  }) => {
+    try {
+      console.log("Saving care plan as Doctor for user:", userId, carePlanData);
+    } catch (err) {
+      console.error("Failed to save care plan", err);
+    }
+  };
+
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
   const fullNameValue =
     data?.fullName || auth.currentUser?.displayName || "New Patient";
 
+  const existingCarePlans = data?.carePlans || [];
+
   const rawProfileData = data || {
     fullName: fullNameValue,
-    role: "Patient",
-    avatarUrl: getInitialsSvg(fullNameValue),
+    role: isDoctor ? "Doctor" : "Patient",
+    avatarUrl: "",
     contactInfo: { phone: "", homePhone: "", address: "", email: "" },
     personalInfo: {
       gender: "",
@@ -75,34 +79,35 @@ export const usePatientProfile = () => {
     },
     insurance: { memberId: "", provider: "" },
     activities: [],
+    carePlans: [],
   };
 
   const profileData = {
     ...rawProfileData,
+    role: isDoctor ? "Doctor" : "Patient",
     appointments,
     surveys,
+    carePlans: existingCarePlans,
     personalInfo: {
       ...rawProfileData.personalInfo,
       age: calculateAge(rawProfileData.personalInfo?.birthDate),
     },
   };
 
-  if (profileData && !profileData.avatarUrl) {
-    profileData.avatarUrl = getInitialsSvg(profileData.fullName || "User");
-  }
-
   return {
     userId,
     data,
-    isLoading,
+    isLoading: dataLoading || authLoading,
     error,
     isModalOpen,
     profileData,
     availableSurveys,
     feedbacks,
+    isDoctor,
     handleOpenModal,
     handleCloseModal,
     addAppointmentToDb,
     addSurveyToDb,
+    addCarePlanToDb,
   };
 };

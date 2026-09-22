@@ -55,16 +55,24 @@ export interface PatientData {
     mobile: boolean;
     mail: boolean;
   };
+  carePlans?: Array<{
+    id: string;
+    title: string;
+    description: string;
+  }>;
 }
 
-const fetchPatientDataFromFirebase = async (): Promise<PatientData | null> => {
+const fetchPatientDataFromFirebase = async (
+  targetUserId?: string,
+): Promise<PatientData | null> => {
   const currentUser = auth.currentUser;
+  const effectiveUserId = targetUserId || currentUser?.uid;
 
-  if (!currentUser) {
-    throw new Error("No authenticated user found");
+  if (!effectiveUserId) {
+    throw new Error("No authenticated user found or target ID provided");
   }
 
-  const docRef = doc(db, "users", currentUser.uid);
+  const docRef = doc(db, "users", effectiveUserId);
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
@@ -74,13 +82,14 @@ const fetchPatientDataFromFirebase = async (): Promise<PatientData | null> => {
   return null;
 };
 
-export const usePatientData = () => {
+export const usePatientData = (targetUserId?: string) => {
   const currentUser = auth.currentUser;
+  const effectiveUserId = targetUserId || currentUser?.uid;
 
   const query = useQuery({
-    queryKey: ["patient", currentUser?.uid || "guest"],
-    queryFn: fetchPatientDataFromFirebase,
-    enabled: !!currentUser,
+    queryKey: ["patient", effectiveUserId || "guest"],
+    queryFn: () => fetchPatientDataFromFirebase(targetUserId),
+    enabled: !!effectiveUserId,
   });
 
   return {
