@@ -27,6 +27,7 @@ export const PatientProfilePage: React.FC<PatientProfilePageProps> = ({
     availableSurveys,
     feedbacks,
     isDoctor,
+    pghdData,
     handleOpenModal,
     handleCloseModal,
     addAppointmentToDb,
@@ -139,7 +140,11 @@ export const PatientProfilePage: React.FC<PatientProfilePageProps> = ({
             }}
           />
         )}
-        {activeTab === "pghd" && <PghdTab />}
+
+        {activeTab === "pghd" && (
+          <PghdTab userId={userId} pghdData={pghdData} />
+        )}
+
         {activeTab === "prescriptions" && <PrescriptionsTab />}
       </div>
 

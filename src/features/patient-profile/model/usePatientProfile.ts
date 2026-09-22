@@ -1,12 +1,20 @@
 import { useState, useEffect } from "react";
 import { auth, db } from "@/app/providers/firebase";
-import { doc, updateDoc, arrayUnion } from "firebase/firestore";
+import {
+  doc,
+  updateDoc,
+  arrayUnion,
+  collection,
+  onSnapshot,
+  query,
+} from "firebase/firestore";
 import { usePatientData } from "@/entities/patient/model/usePatientData";
 import { useAppointments } from "../../appointments/model/useAppointments";
 import { useSurveys } from "../../surveys/model/useSurveys";
 import { useFeedback } from "@/features/feedback/model/useFeedback";
 import type { AppointmentItem } from "../model/types";
 import { useAuth } from "@/shared/lib/useAuth";
+import type { PghdItem } from "../ui/tabs/PghdTab";
 
 interface CarePlanItem {
   title: string;
@@ -41,12 +49,28 @@ export const usePatientProfile = (targetUserId?: string) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [carePlans, setCarePlans] = useState<CarePlanItem[]>([]);
+  const [pghdData, setPghdData] = useState<PghdItem[]>([]);
 
   useEffect(() => {
     if (data?.carePlans) {
       setCarePlans(data.carePlans);
     }
   }, [data?.carePlans]);
+
+  useEffect(() => {
+    if (!userId) return;
+
+    const q = query(collection(db, `users/${userId}/pghd`));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const items: PghdItem[] = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...(doc.data() as Omit<PghdItem, "id">),
+      }));
+      setPghdData(items);
+    });
+
+    return () => unsubscribe();
+  }, [userId]);
 
   const initialAppointments: AppointmentItem[] = (data?.appointments ||
     []) as unknown as AppointmentItem[];
@@ -157,6 +181,7 @@ export const usePatientProfile = (targetUserId?: string) => {
     availableSurveys,
     feedbacks,
     isDoctor,
+    pghdData,
     handleOpenModal,
     handleCloseModal,
     addAppointmentToDb,
