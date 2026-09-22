@@ -50,7 +50,11 @@ export const useSurveys = (userId: string) => {
   const addSurveyToDb = async (newSurveyData: Omit<SurveyItem, "id">) => {
     if (!userId) return;
     try {
-      await addDoc(collection(db, `users/${userId}/surveys`), newSurveyData);
+      await addDoc(collection(db, `users/${userId}/surveys`), {
+        ...newSurveyData,
+        status: newSurveyData.status || "Pending",
+        details: "",
+      });
     } catch (error) {
       console.error("Error adding survey to Firestore:", error);
     }

@@ -28,4 +28,5 @@ export interface SurveyItem {
   title: string;
   completedDate: string;
   details?: string;
+  status?: "Completed" | "Reviewed" | "Pending" | string;
 }

@@ -32,6 +32,7 @@ export const PatientProfilePage: React.FC<PatientProfilePageProps> = ({
     addAppointmentToDb,
     addSurveyToDb,
     addCarePlanToDb,
+    updateSurveyResultInDb,
   } = usePatientProfile(targetUserId);
 
   const { activeTab, setActiveTab } = usePatientTabs();
@@ -129,7 +130,15 @@ export const PatientProfilePage: React.FC<PatientProfilePageProps> = ({
           />
         )}
 
-        {activeTab === "lab-results" && <LabResultsTab />}
+        {activeTab === "lab-results" && (
+          <LabResultsTab
+            isDoctor={isDoctor}
+            surveys={profileData.surveys}
+            onUpdateSurveyResult={(surveyId, details, status) => {
+              void updateSurveyResultInDb(surveyId, details, status);
+            }}
+          />
+        )}
         {activeTab === "pghd" && <PghdTab />}
         {activeTab === "prescriptions" && <PrescriptionsTab />}
       </div>

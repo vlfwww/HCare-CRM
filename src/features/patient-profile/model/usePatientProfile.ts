@@ -87,6 +87,29 @@ export const usePatientProfile = (targetUserId?: string) => {
     }
   };
 
+  const updateSurveyResultInDb = async (
+    surveyId: string,
+    details: string,
+    status?: string,
+  ) => {
+    if (!userId) return;
+
+    try {
+      const surveyRef = doc(db, "users", userId, "surveys", surveyId);
+      await updateDoc(surveyRef, {
+        details: details,
+        status: status || "Completed",
+        completedDate: new Date().toLocaleDateString(),
+      });
+      console.log(
+        "Survey result successfully updated in database for survey:",
+        surveyId,
+      );
+    } catch (err) {
+      console.error("Failed to update survey result in database", err);
+    }
+  };
+
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
@@ -139,5 +162,6 @@ export const usePatientProfile = (targetUserId?: string) => {
     addAppointmentToDb,
     addSurveyToDb,
     addCarePlanToDb,
+    updateSurveyResultInDb,
   };
 };
