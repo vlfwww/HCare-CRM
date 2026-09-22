@@ -1,15 +1,14 @@
 import React from "react";
 import { PatientHeader } from "./PatientHeader";
-import { ContactInfo } from "../../contact-info/ui/ContactInfo";
-import { PersonalInfo } from "../../profile-info/ui/PersonalInfo";
-import { Activities } from "../../activities/ui/Activities";
-import { SurveysCard } from "../../surveys/ui/SurveysCard";
-import { ContactPreferencesCard } from "../../contact-preferences/ui/ContactPreferencesCard";
 import { EditProfileModal } from "../../edit-profile/ui/EditProfileModal";
-import { InsuranceInfo } from "../../insurance-info/ui/InsuranceInfo";
-import { AppointmentsCard } from "../../appointments/ui/AppointmentsCard";
-import { FeedbackCard } from "@/features/feedback/ui/FeedbackCard";
 import { usePatientProfile } from "../model/usePatientProfile";
+import { usePatientTabs, type PatientTabType } from "../model/usePatientTabs";
+
+import { SummaryTab } from "./tabs/SummaryTab";
+import { CarePlanTab } from "./tabs/CarePlanTab";
+import { LabResultsTab } from "./tabs/LabResultsTab";
+import { PghdTab } from "./tabs/PghdTab";
+import { PrescriptionsTab } from "./tabs/PrescriptionsTab";
 
 export const PatientProfilePage: React.FC = () => {
   const {
@@ -27,6 +26,8 @@ export const PatientProfilePage: React.FC = () => {
     addSurveyToDb,
   } = usePatientProfile();
 
+  const { activeTab, setActiveTab } = usePatientTabs();
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -42,6 +43,14 @@ export const PatientProfilePage: React.FC = () => {
       </div>
     );
   }
+
+  const tabsConfig: { id: PatientTabType; label: string }[] = [
+    { id: "summary", label: "Summary" },
+    { id: "care-plan", label: "Care plan" },
+    { id: "lab-results", label: "Lab results" },
+    { id: "pghd", label: "PGHD" },
+    { id: "prescriptions", label: "Prescriptions" },
+  ];
 
   return (
     <div className="max-w-[1400px] mx-auto px-6 py-6 font-manrope relative">
@@ -61,65 +70,46 @@ export const PatientProfilePage: React.FC = () => {
         </div>
 
         <div className="flex gap-8 border-b border-gray-100 mb-8 pb-1">
-          <button className="pb-3 text-emerald-600 font-semibold border-b-2 border-emerald-500 -mb-[5px] cursor-pointer">
-            Summary
-          </button>
-          <button className="pb-3 text-gray-400 hover:text-gray-700 transition-colors font-medium cursor-pointer">
-            Care plan
-          </button>
-          <button className="pb-3 text-gray-400 hover:text-gray-700 transition-colors font-medium cursor-pointer">
-            Lab results
-          </button>
-          <button className="pb-3 text-gray-400 hover:text-gray-700 transition-colors font-medium cursor-pointer">
-            PGHD
-          </button>
-          <button className="pb-3 text-gray-400 hover:text-gray-700 transition-colors font-medium cursor-pointer">
-            Prescriptions
-          </button>
+          {tabsConfig.map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`pb-3 transition-colors cursor-pointer font-medium text-sm ${
+                  isActive
+                    ? "text-emerald-600 font-semibold border-b-2 border-emerald-500 -mb-[5px]"
+                    : "text-gray-400 hover:text-gray-700"
+                }`}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="space-y-6">
-            <ContactInfo
-              data={profileData.contactInfo}
-              fullName={profileData.fullName}
-            />
-            <PersonalInfo data={profileData.personalInfo} />
-          </div>
+        {activeTab === "summary" && (
+          <SummaryTab
+            userId={userId}
+            profileData={profileData}
+            availableSurveys={availableSurveys}
+            feedbacks={feedbacks}
+            onEditProfile={handleOpenModal}
+            onAppointmentCreated={(newApp) => {
+              void addAppointmentToDb(
+                newApp as unknown as Parameters<typeof addAppointmentToDb>[0],
+              );
+            }}
+            onSurveyCreated={(newSurvey) => {
+              void addSurveyToDb(newSurvey);
+            }}
+          />
+        )}
 
-          <div className="space-y-6">
-            <Activities userId={userId} />
-            <InsuranceInfo
-              memberId={profileData.insurance?.memberId || ""}
-              provider={profileData.insurance?.provider || ""}
-              onEdit={handleOpenModal}
-            />
-          </div>
-
-          <div className="space-y-6">
-            <AppointmentsCard
-              userId={userId}
-              patientName={profileData.fullName}
-              patientDob={profileData.personalInfo?.birthDate || ""}
-              appointments={profileData.appointments}
-              onAppointmentCreated={(newApp) => {
-                void addAppointmentToDb(
-                  newApp as unknown as Parameters<typeof addAppointmentToDb>[0],
-                );
-              }}
-            />
-            <SurveysCard
-              userId={userId}
-              surveys={profileData.surveys}
-              availableSurveys={availableSurveys}
-              onSurveyCreated={(newSurvey) => {
-                void addSurveyToDb(newSurvey);
-              }}
-            />
-            <FeedbackCard feedbacks={feedbacks} />
-            <ContactPreferencesCard />
-          </div>
-        </div>
+        {activeTab === "care-plan" && <CarePlanTab />}
+        {activeTab === "lab-results" && <LabResultsTab />}
+        {activeTab === "pghd" && <PghdTab />}
+        {activeTab === "prescriptions" && <PrescriptionsTab />}
       </div>
 
       <EditProfileModal
