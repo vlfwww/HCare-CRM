@@ -7,6 +7,8 @@ import {
   collection,
   onSnapshot,
   query,
+  addDoc,
+  orderBy,
 } from "firebase/firestore";
 import { usePatientData } from "@/entities/patient/model/usePatientData";
 import { useAppointments } from "../../appointments/model/useAppointments";
@@ -15,6 +17,7 @@ import { useFeedback } from "@/features/feedback/model/useFeedback";
 import type { AppointmentItem } from "../model/types";
 import { useAuth } from "@/shared/lib/useAuth";
 import type { PghdItem } from "../ui/tabs/PghdTab";
+import type { PrescriptionItem } from "../ui/tabs/PrescriptionsTab";
 
 interface CarePlanItem {
   title: string;
@@ -50,6 +53,7 @@ export const usePatientProfile = (targetUserId?: string) => {
 
   const [carePlans, setCarePlans] = useState<CarePlanItem[]>([]);
   const [pghdData, setPghdData] = useState<PghdItem[]>([]);
+  const [prescriptions, setPrescriptions] = useState<PrescriptionItem[]>([]);
 
   useEffect(() => {
     if (data?.carePlans) {
@@ -68,6 +72,30 @@ export const usePatientProfile = (targetUserId?: string) => {
       }));
       setPghdData(items);
     });
+
+    return () => unsubscribe();
+  }, [userId]);
+
+  useEffect(() => {
+    if (!userId) return;
+
+    const q = query(
+      collection(db, `users/${userId}/prescriptions`),
+      orderBy("createdAt", "desc"),
+    );
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const items: PrescriptionItem[] = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...(doc.data() as Omit<PrescriptionItem, "id">),
+        }));
+        setPrescriptions(items);
+      },
+      (error) => {
+        console.error("Error fetching prescriptions:", error);
+      },
+    );
 
     return () => unsubscribe();
   }, [userId]);
@@ -108,6 +136,23 @@ export const usePatientProfile = (targetUserId?: string) => {
       if (data?.carePlans) {
         setCarePlans(data.carePlans);
       }
+    }
+  };
+
+  const addPrescriptionToDb = async (
+    prescriptionData: Omit<PrescriptionItem, "id" | "createdAt">,
+  ) => {
+    if (!userId) return;
+
+    try {
+      await addDoc(collection(db, `users/${userId}/prescriptions`), {
+        ...prescriptionData,
+        createdAt: new Date().toISOString(),
+      });
+      console.log("Prescription successfully added to database");
+    } catch (error) {
+      console.error("Error adding prescription:", error);
+      throw error;
     }
   };
 
@@ -182,11 +227,13 @@ export const usePatientProfile = (targetUserId?: string) => {
     feedbacks,
     isDoctor,
     pghdData,
+    prescriptions,
     handleOpenModal,
     handleCloseModal,
     addAppointmentToDb,
     addSurveyToDb,
     addCarePlanToDb,
     updateSurveyResultInDb,
+    addPrescriptionToDb,
   };
 };

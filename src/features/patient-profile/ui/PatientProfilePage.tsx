@@ -28,12 +28,14 @@ export const PatientProfilePage: React.FC<PatientProfilePageProps> = ({
     feedbacks,
     isDoctor,
     pghdData,
+    prescriptions,
     handleOpenModal,
     handleCloseModal,
     addAppointmentToDb,
     addSurveyToDb,
     addCarePlanToDb,
     updateSurveyResultInDb,
+    addPrescriptionToDb,
   } = usePatientProfile(targetUserId);
 
   const { activeTab, setActiveTab } = usePatientTabs();
@@ -144,8 +146,14 @@ export const PatientProfilePage: React.FC<PatientProfilePageProps> = ({
         {activeTab === "pghd" && (
           <PghdTab userId={userId} pghdData={pghdData} />
         )}
-
-        {activeTab === "prescriptions" && <PrescriptionsTab />}
+        {activeTab === "prescriptions" && (
+          <PrescriptionsTab
+            userId={userId}
+            prescriptions={prescriptions}
+            isDoctor={isDoctor}
+            onAddPrescription={addPrescriptionToDb}
+          />
+        )}
       </div>
 
       {canEditProfile && (
