@@ -1,10 +1,23 @@
 import React from "react";
 import { SlidersHorizontal, Loader2, AlertCircle } from "lucide-react";
-import { StaffRow } from "@/entities/staff/ui/StaffRow";
-import { useStaffQuery } from "../model/useStaffQuery";
+import { StaffRow } from "@/features/medical-staff/ui/StaffRow";
+import { AppointmentModal } from "@/features/appointments/ui/AppointmentModal";
+import { useMedicalStaff } from "../model/useMedicalStaff";
 
 export const MedicalStaffPage: React.FC = () => {
-  const { data: staffList, isLoading, isError } = useStaffQuery();
+  const {
+    staffList,
+    isLoading,
+    isError,
+    isModalOpen,
+    selectedDoctorId,
+    userId,
+    patientName,
+    patientDob,
+    handleOpenModalWithDoctor,
+    handleCloseModal,
+    handleAppointmentCreated,
+  } = useMedicalStaff();
 
   return (
     <div className="max-w-[1400px] mx-auto px-6 py-6 font-manrope">
@@ -59,7 +72,11 @@ export const MedicalStaffPage: React.FC = () => {
                   staffList &&
                   staffList.length > 0 &&
                   staffList.map((person) => (
-                    <StaffRow key={person.id} person={person} />
+                    <StaffRow
+                      key={person.id}
+                      person={person}
+                      onBook={() => handleOpenModalWithDoctor(person.id)}
+                    />
                   ))}
 
                 {!isLoading &&
@@ -79,6 +96,16 @@ export const MedicalStaffPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <AppointmentModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        userId={userId}
+        patientName={patientName}
+        patientDob={patientDob}
+        initialDoctorId={selectedDoctorId}
+        onAppointmentCreated={handleAppointmentCreated}
+      />
     </div>
   );
 };

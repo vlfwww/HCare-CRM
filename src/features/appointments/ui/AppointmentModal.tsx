@@ -10,6 +10,7 @@ interface AppointmentModalProps {
   userId: string;
   patientName: string;
   patientDob: string;
+  initialDoctorId?: string;
   onAppointmentCreated: (newAppointment: any) => void;
 }
 
@@ -19,6 +20,7 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
   userId,
   patientName,
   patientDob,
+  initialDoctorId,
   onAppointmentCreated,
 }) => {
   const [doctors, setDoctors] = useState<StaffMember[]>([]);
@@ -72,6 +74,14 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
 
     fetchStaff();
   }, [isOpen]);
+
+  useEffect(() => {
+    if (isOpen && initialDoctorId) {
+      setSelectedDoctorId(initialDoctorId);
+    } else if (isOpen && !initialDoctorId) {
+      setSelectedDoctorId("");
+    }
+  }, [isOpen, initialDoctorId]);
 
   const selectedDoctor = doctors.find((doc) => doc.id === selectedDoctorId);
 
