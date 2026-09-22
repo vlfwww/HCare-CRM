@@ -81,7 +81,7 @@ export const AppointmentsCard: React.FC<AppointmentsCardProps> = ({
                     <td className="py-4 px-4">
                       <span
                         className={`font-semibold ${
-                          status === "Confirmed"
+                          status === "Confirmed" || status === "Completed"
                             ? "text-emerald-500"
                             : status === "Cancelled"
                               ? "text-red-500"
