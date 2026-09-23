@@ -24,15 +24,7 @@ export const Home: React.FC = () => {
         </p>
 
         <div className="flex justify-center gap-4">
-          {user && !loading && !isDoctor ? (
-            <Link
-              to="/medical-staff"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 text-white rounded-xl font-semibold text-sm hover:bg-emerald-600 transition-colors shadow-sm cursor-pointer shadow-emerald-500/20"
-            >
-              <span>Open Medical Staff</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          ) : (
+          {!loading && !user ? (
             <Link
               to="/login"
               className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 text-white rounded-xl font-semibold text-sm hover:bg-emerald-600 transition-colors shadow-sm cursor-pointer shadow-emerald-500/20"
@@ -40,7 +32,23 @@ export const Home: React.FC = () => {
               <span>Sign In to Continue</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
-          )}
+          ) : !loading && isDoctor ? (
+            <Link
+              to="/profile"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 text-white rounded-xl font-semibold text-sm hover:bg-emerald-600 transition-colors shadow-sm cursor-pointer shadow-emerald-500/20"
+            >
+              <span>Open Doctor Profile</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          ) : !loading ? (
+            <Link
+              to="/medical-staff"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 text-white rounded-xl font-semibold text-sm hover:bg-emerald-600 transition-colors shadow-sm cursor-pointer shadow-emerald-500/20"
+            >
+              <span>Open Medical Staff</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          ) : null}
         </div>
       </div>
     </div>
