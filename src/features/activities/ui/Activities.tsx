@@ -59,7 +59,7 @@ export const Activities: React.FC<ActivitiesProps> = ({ userId }) => {
           />
           <button
             type="button"
-            className="absolute right-0 top-1 text-gray-400 hover:text-gray-600"
+            className="absolute right-0 top-0.5 w-11 h-11 flex items-center justify-center text-gray-600 hover:text-gray-900"
             aria-label="Search activities"
           >
             <Search className="w-4 h-4" />
@@ -103,7 +103,7 @@ export const Activities: React.FC<ActivitiesProps> = ({ userId }) => {
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="text-gray-400 hover:text-gray-600 cursor-pointer"
+                className="w-11 h-11 flex items-center justify-center text-gray-600 hover:text-gray-900 cursor-pointer"
                 aria-label="Close activity form"
               >
                 <X className="w-5 h-5" />
@@ -134,7 +134,7 @@ export const Activities: React.FC<ActivitiesProps> = ({ userId }) => {
                 />
                 <button
                   type="button"
-                  className="absolute right-0 top-1 text-gray-400 hover:text-gray-600"
+                  className="absolute right-0 top-0.5 w-11 h-11 flex items-center justify-center text-gray-600 hover:text-gray-900"
                   aria-label="Add link"
                 >
                   <Link2 className="w-4 h-4" />

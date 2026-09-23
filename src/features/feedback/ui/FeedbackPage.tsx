@@ -40,7 +40,7 @@ export const FeedbackPage: React.FC = () => {
   const reviewedIds = feedbacks.map((f) => f.appointmentId);
 
   return (
-    <div className="max-w-[1400px] mx-auto px-6 py-6 font-manrope">
+    <div className="max-w-[1400px] mx-auto px-3 sm:px-6 py-4 sm:py-6 font-manrope">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
           Leave Feedback

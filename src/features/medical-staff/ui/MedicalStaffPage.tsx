@@ -48,12 +48,12 @@ export const MedicalStaffPage: React.FC = () => {
         </div>
 
         <div className="bg-white rounded-xl border border-gray-200 shadow-2xs overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
+          <div className="overflow-x-hidden">
+            <table className="w-full table-fixed text-left">
               <thead>
-                <tr className="bg-gray-50/70 text-gray-400 text-xs font-semibold border-b border-gray-100">
-                  <th className="py-3.5 px-6">Name</th>
-                  <th className="py-3.5 px-4">City/Country</th>
+                <tr className="bg-gray-50/70 text-gray-600 text-xs font-semibold border-b border-gray-100">
+                  <th className="py-3.5 px-3 sm:px-6">Name</th>
+                  <th className="py-3.5 px-3 sm:px-4">City/Country</th>
                   <th className="py-3.5 px-4">Available hours</th>
                   <th className="py-3.5 px-4">Schedule an appointment</th>
                   <th className="py-3.5 px-4">Confirmation</th>

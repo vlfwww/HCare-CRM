@@ -7,8 +7,8 @@ export const Home: React.FC = () => {
   const { user, isDoctor, loading } = useAuth();
 
   return (
-    <div className="max-w-[1400px] mx-auto px-6 py-12 font-manrope">
-      <div className="bg-white rounded-2xl border border-gray-200 p-10 sm:p-16 shadow-2xs max-w-3xl mx-auto text-center">
+    <div className="max-w-[1400px] mx-auto px-3 sm:px-6 py-8 sm:py-12 font-manrope">
+      <div className="bg-white rounded-2xl border border-gray-200 p-6 sm:p-10 lg:p-16 shadow-2xs max-w-3xl mx-auto text-center">
         <div className="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-6 shadow-xs">
           <Building2 className="w-8 h-8" />
         </div>
@@ -23,13 +23,14 @@ export const Home: React.FC = () => {
           monitor service feedback.
         </p>
 
-        <div className="flex justify-center gap-4">
-          {!loading && !user ? (
+        <div className="flex flex-wrap justify-center gap-3 sm:gap-4 min-h-12">
+          {loading || !user ? (
             <Link
               to="/login"
+              aria-busy={loading}
               className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-700 text-white rounded-xl font-semibold text-sm hover:bg-emerald-800 transition-colors shadow-sm cursor-pointer shadow-emerald-700/20"
             >
-              <span>Sign In to Continue</span>
+              <span>{loading ? "Sign In" : "Sign In to Continue"}</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           ) : !loading && isDoctor ? (

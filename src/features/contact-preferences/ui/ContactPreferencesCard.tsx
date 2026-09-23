@@ -21,7 +21,7 @@ export const ContactPreferencesCard: React.FC = () => {
         </p>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-hidden">
         <table className="w-full text-left text-xs">
           <thead>
             <tr className="bg-gray-50/70 text-gray-600 border-y border-gray-100">
@@ -50,7 +50,7 @@ export const ContactPreferencesCard: React.FC = () => {
                         <>
                           <span
                             className={`font-semibold ${
-                              !isAllowed ? "text-red-500" : "text-gray-300"
+                              !isAllowed ? "text-red-700" : "text-gray-600"
                             }`}
                           >
                             DENY
@@ -65,7 +65,7 @@ export const ContactPreferencesCard: React.FC = () => {
                             <div
                               className={`w-4 h-4 rounded-full shadow-md transform transition-transform duration-200 ease-in-out ${
                                 isAllowed
-                                  ? "translate-x-5 bg-emerald-500"
+                                  ? "translate-x-5 bg-emerald-700"
                                   : "translate-x-0 bg-red-500"
                               }`}
                             />
@@ -73,7 +73,7 @@ export const ContactPreferencesCard: React.FC = () => {
 
                           <span
                             className={`font-semibold ${
-                              isAllowed ? "text-emerald-500" : "text-gray-300"
+                              isAllowed ? "text-emerald-700" : "text-gray-600"
                             }`}
                           >
                             ALLOW

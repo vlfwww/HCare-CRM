@@ -52,17 +52,21 @@ export const PersonalInfo: React.FC<PersonalInfoProps> = ({
             {isEditing ? (
               <div className="flex items-center gap-2">
                 <button
+                  type="button"
                   onClick={handleSave}
                   disabled={isSaving}
-                  className="p-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors flex items-center justify-center shadow-sm disabled:opacity-50 cursor-pointer"
+                  className="w-11 h-11 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors flex items-center justify-center shadow-sm disabled:opacity-50 cursor-pointer"
+                  aria-label="Save personal information"
                   title="Save"
                 >
                   <Check className="w-4 h-4" />
                 </button>
                 <button
+                  type="button"
                   onClick={handleCancel}
                   disabled={isSaving}
-                  className="p-1.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg transition-colors flex items-center justify-center cursor-pointer"
+                  className="w-11 h-11 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg transition-colors flex items-center justify-center cursor-pointer"
+                  aria-label="Cancel personal information changes"
                   title="Cancel"
                 >
                   <X className="w-4 h-4" />

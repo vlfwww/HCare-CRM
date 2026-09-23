@@ -22,10 +22,10 @@ export const PghdTab: React.FC<PghdTabProps> = ({ userId, pghdData = [] }) => {
       <DeviceSimulator userId={userId} />
 
       <div className="bg-white rounded-xl border border-gray-200 shadow-xs overflow-hidden">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-hidden">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="bg-gray-50 text-gray-400 border-b border-gray-100">
+              <tr className="bg-gray-50 text-gray-600 border-b border-gray-100">
                 <th className="py-3 px-6 font-medium">Metric / Parameter</th>
                 <th className="py-3 px-4 font-medium">Value</th>
                 <th className="py-3 px-4 font-medium">Date & Time</th>
@@ -36,7 +36,7 @@ export const PghdTab: React.FC<PghdTabProps> = ({ userId, pghdData = [] }) => {
             <tbody className="divide-y divide-gray-100">
               {pghdData.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-12 text-center text-gray-400">
+                  <td colSpan={5} className="py-12 text-center text-gray-600">
                     <p className="font-medium">
                       No PGHD records available yet.
                     </p>

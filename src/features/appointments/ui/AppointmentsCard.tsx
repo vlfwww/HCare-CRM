@@ -38,7 +38,7 @@ export const AppointmentsCard: React.FC<AppointmentsCardProps> = ({
         )}
       </div>
 
-      <div className="overflow-x-auto pb-4">
+      <div className="overflow-x-hidden pb-4">
         {!appointments || appointments.length === 0 ? (
           <div className="text-center py-8 px-4">
             <p className="text-xs text-gray-600">
@@ -87,10 +87,10 @@ export const AppointmentsCard: React.FC<AppointmentsCardProps> = ({
                       <span
                         className={`font-semibold ${
                           status === "Confirmed" || status === "Completed"
-                            ? "text-emerald-500"
+                            ? "text-emerald-700"
                             : status === "Cancelled"
                               ? "text-red-500"
-                              : "text-amber-500"
+                              : "text-amber-700"
                         }`}
                       >
                         {status}

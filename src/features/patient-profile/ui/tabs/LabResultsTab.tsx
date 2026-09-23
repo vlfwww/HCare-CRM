@@ -128,10 +128,10 @@ export const LabResultsTab: React.FC<LabResultsTabProps> = ({
       )}
 
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-hidden">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="bg-gray-50/70 text-gray-400 border-y border-gray-100">
+              <tr className="bg-gray-50/70 text-gray-600 border-y border-gray-100">
                 <th className="py-3 px-6 font-medium">Title</th>
                 <th className="py-3 px-4 font-medium">Date</th>
                 <th className="py-3 px-4 font-medium">Status</th>
@@ -141,7 +141,7 @@ export const LabResultsTab: React.FC<LabResultsTabProps> = ({
             <tbody className="divide-y divide-gray-100">
               {surveys.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="py-8 text-center text-gray-400">
+                  <td colSpan={4} className="py-8 text-center text-gray-600">
                     No lab results or surveys available yet.
                   </td>
                 </tr>

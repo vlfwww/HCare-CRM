@@ -24,7 +24,7 @@ export const FeedbackCard: React.FC<FeedbackCardProps> = ({ feedbacks }) => {
         </div>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-hidden">
         <table className="w-full text-left text-xs">
           <thead>
             <tr className="bg-gray-50/70 text-gray-600 border-y border-gray-100">

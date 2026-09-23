@@ -51,8 +51,8 @@ export const DoctorDashboardPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-[1400px] mx-auto px-6 py-6 font-manrope">
-      <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
+    <div className="max-w-[1400px] mx-auto px-3 sm:px-6 py-4 sm:py-6 font-manrope">
+      <div className="bg-white rounded-2xl border border-gray-200 p-4 sm:p-8 shadow-sm">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8 pb-6 border-b border-gray-100">
           <div className="flex items-center gap-4">
             <button
@@ -60,6 +60,7 @@ export const DoctorDashboardPage: React.FC = () => {
               onClick={() => avatarInputRef.current?.click()}
               className="relative w-16 h-16 rounded-full overflow-hidden border border-gray-200 bg-gray-100 flex items-center justify-center text-gray-400 cursor-pointer group"
               title="Change profile photo"
+              aria-label="Change profile photo"
             >
               {data.avatarUrl ? (
                 <img
@@ -105,6 +106,7 @@ export const DoctorDashboardPage: React.FC = () => {
           </div>
 
           <button
+            type="button"
             onClick={() => setIsEditModalOpen(true)}
             className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors shadow-sm cursor-pointer"
           >

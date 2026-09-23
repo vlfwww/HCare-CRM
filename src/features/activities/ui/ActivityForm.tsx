@@ -32,7 +32,7 @@ export const ActivityForm: React.FC<ActivityFormProps> = ({
         className="w-full bg-transparent border-b border-gray-200 rounded-none px-0 pb-2 text-sm text-gray-700 focus:outline-none focus:border-emerald-500 pr-16"
       />
       <div className="absolute right-0 top-1 flex items-center gap-2">
-        <button type="button" className="text-gray-400 hover:text-gray-600">
+        <button type="button" aria-label="Add link" className="w-11 h-11 flex items-center justify-center text-gray-600 hover:text-gray-900">
           <Link2 className="w-4 h-4" />
         </button>
         {postText.trim() && (

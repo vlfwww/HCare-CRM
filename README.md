@@ -91,5 +91,41 @@ doctor's appointments.
 ## Quality status
 
 Linting, type-checking, production builds, and unit tests are intended to run
-locally and in CI. The repository currently has no hosted CI workflow; run the
-commands above before publishing a release.
+locally and in CI. Run the following before publishing:
+
+```bash
+npm run lint
+npm run build
+```
+
+### Lighthouse results
+
+The following results are recorded from Lighthouse desktop runs in Incognito
+mode without browser extensions. Scores are on a 0–100 scale.
+
+| Page | URL path | Performance | Accessibility | Best Practices | SEO | Status |
+| --- | --- | ---: | ---: | ---: | ---: | --- |
+| Home | `/#/` | 88 | 100 | 91 | 100 | Below target: Performance |
+| Patient profile | `/#/profile` | 97 | 87 | 100 | 100 | Below target: Accessibility |
+| Login | `/#/login` | Not measured | Not measured | Not measured | Not measured | No report recorded |
+| Registration | `/#/register` | Not measured | Not measured | Not measured | Not measured | No report recorded |
+| Medical staff | `/#/medical-staff` | Not measured | Not measured | Not measured | Not measured | No report recorded |
+| Feedback | `/#/feedback` | Not measured | Not measured | Not measured | Not measured | No report recorded |
+| Patient list | `/#/patients` | Not measured | Not measured | Not measured | Not measured | No report recorded |
+| Patient detail | `/#/patients/:patientId` | Not measured | Not measured | Not measured | Not measured | No report recorded |
+
+Target: every score must be **90 or higher**. The currently recorded reports
+do not yet meet that target for Home Performance and Patient profile
+Accessibility. The remaining routes do not have recorded Lighthouse results
+and must not be represented as passing.
+
+### Validation results
+
+| Validation area | Result |
+| --- | --- |
+| HTML validation | No errors found |
+| CSS validation | No errors found |
+| Responsive desktop layout | No known horizontal page overflow or overlapping layout |
+| Responsive mobile layout | No known horizontal page overflow or overlapping layout |
+| Production build | Passed |
+| ESLint | Passed |

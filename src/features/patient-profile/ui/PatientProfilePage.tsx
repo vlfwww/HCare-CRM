@@ -94,7 +94,11 @@ export const PatientProfilePage: React.FC<PatientProfilePageProps> = ({
           )}
         </div>
 
-        <div className="flex flex-wrap gap-x-6 gap-y-2 border-b border-gray-100 mb-8 pb-1">
+        <div
+          className="flex flex-wrap gap-x-6 gap-y-2 border-b border-gray-100 mb-8 pb-1"
+          role="tablist"
+          aria-label="Patient profile sections"
+        >
           {tabsConfig.map((tab) => {
             const isActive = activeTab === tab.id;
             return (
@@ -105,7 +109,8 @@ export const PatientProfilePage: React.FC<PatientProfilePageProps> = ({
                 aria-label={`Open ${tab.label}`}
                 aria-selected={isActive}
                 role="tab"
-                className={`pb-3 transition-colors cursor-pointer font-medium text-sm whitespace-nowrap ${
+                aria-controls={`patient-panel-${tab.id}`}
+                className={`pb-3 transition-colors cursor-pointer font-medium text-sm ${
                   isActive
                     ? "text-emerald-600 font-semibold border-b-2 border-emerald-500 -mb-[5px]"
                     : "text-gray-600 hover:text-gray-900"
@@ -118,57 +123,71 @@ export const PatientProfilePage: React.FC<PatientProfilePageProps> = ({
         </div>
 
         {activeTab === "summary" && (
-          <SummaryTab
-            userId={userId}
-            profileData={profileData}
-            availableSurveys={availableSurveys}
-            feedbacks={isDoctor ? [] : feedbacks}
-            onEditProfile={canEditProfile ? handleOpenModal : undefined}
-            onAppointmentCreated={async (newApp) => {
-              await addAppointmentToDb(
-                newApp as unknown as Parameters<typeof addAppointmentToDb>[0],
-              );
-            }}
-            onSurveyCreated={(newSurvey) => {
-              void addSurveyToDb(newSurvey);
-            }}
-          />
+          <div id="patient-panel-summary" role="tabpanel" aria-label="Summary">
+            <SummaryTab
+              userId={userId}
+              profileData={profileData}
+              availableSurveys={availableSurveys}
+              feedbacks={isDoctor ? [] : feedbacks}
+              onEditProfile={canEditProfile ? handleOpenModal : undefined}
+              onAppointmentCreated={async (newApp) => {
+                await addAppointmentToDb(
+                  newApp as unknown as Parameters<typeof addAppointmentToDb>[0],
+                );
+              }}
+              onSurveyCreated={(newSurvey) => {
+                void addSurveyToDb(newSurvey);
+              }}
+            />
+          </div>
         )}
 
         {activeTab === "care-plan" && (
-          <CarePlanTab
+          <div id="patient-panel-care-plan" role="tabpanel" aria-label="Care plan">
+            <CarePlanTab
             isDoctor={isDoctor}
             carePlans={profileData.carePlans || []}
             onAddCarePlan={(plan) => {
               void addCarePlanToDb(plan);
             }}
-          />
+            />
+          </div>
         )}
 
         {activeTab === "lab-results" && (
-          <LabResultsTab
+          <div id="patient-panel-lab-results" role="tabpanel" aria-label="Lab results">
+            <LabResultsTab
             isDoctor={isDoctor}
             surveys={profileData.surveys}
             onUpdateSurveyResult={(surveyId, details, status) => {
               void updateSurveyResultInDb(surveyId, details, status);
             }}
-          />
+            />
+          </div>
         )}
 
         {activeTab === "pghd" && (
-          <PghdTab userId={userId} pghdData={pghdData} />
+          <div id="patient-panel-pghd" role="tabpanel" aria-label="PGHD">
+            <PghdTab userId={userId} pghdData={pghdData} />
+          </div>
         )}
 
         {activeTab === "prescriptions" && (
-          <PrescriptionsTab
+          <div id="patient-panel-prescriptions" role="tabpanel" aria-label="Prescriptions">
+            <PrescriptionsTab
             userId={userId}
             prescriptions={prescriptions}
             isDoctor={isDoctor}
             onAddPrescription={addPrescriptionToDb}
-          />
+            />
+          </div>
         )}
 
-        {activeTab === ("chat" as PatientTabType) && <ChatTab />}
+        {activeTab === ("chat" as PatientTabType) && (
+          <div id="patient-panel-chat" role="tabpanel" aria-label="Support chat">
+            <ChatTab />
+          </div>
+        )}
       </div>
 
       {canEditProfile && (

@@ -68,7 +68,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
         <div className="relative">
         <button
           onClick={handleNotificationsToggle}
-          className="relative p-2 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+          className="relative w-11 h-11 flex items-center justify-center text-gray-600 hover:text-gray-900 transition-colors cursor-pointer"
           aria-label="Уведомления"
           aria-expanded={isNotificationsOpen}
         >

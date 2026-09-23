@@ -13,7 +13,7 @@ export const ActivityTabs: React.FC<ActivityTabsProps> = ({
   onChangeTab,
 }) => {
   return (
-    <div className="grid grid-cols-3 border-b border-gray-100 mb-6 text-sm text-center">
+    <div className="grid grid-cols-3 border-b border-gray-100 mb-6 text-sm text-center" role="tablist" aria-label="Activity sections">
       {tabs.map((tab) => (
         <button
           key={tab}

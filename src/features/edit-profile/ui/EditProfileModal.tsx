@@ -44,7 +44,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
           <div className="border-t pt-3">
             <p className="font-semibold text-gray-700 mb-2">Contact Info</p>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs text-gray-500 mb-1">
                   Phone *
@@ -84,7 +84,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
                 )}
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-3 mt-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
               <div>
                 <label className="block text-xs text-gray-500 mb-1">
                   Email *
@@ -128,7 +128,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
           <div className="border-t pt-3">
             <p className="font-semibold text-gray-700 mb-2">Personal Info</p>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs text-gray-500 mb-1">
                   Gender *
@@ -170,7 +170,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
                 )}
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-3 mt-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-2">
               <div>
                 <label className="block text-xs text-gray-500 mb-1">
                   Nationality *
@@ -238,7 +238,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
           <div className="border-t pt-3">
             <p className="font-semibold text-gray-700 mb-2">Insurance Info</p>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs text-gray-500 mb-1">
                   Member ID *

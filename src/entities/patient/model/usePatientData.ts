@@ -88,6 +88,8 @@ export const usePatientData = (targetUserId?: string) => {
     queryKey: ["patient", effectiveUserId || "guest"],
     queryFn: () => fetchPatientDataFromFirebase(effectiveUserId || ""),
     enabled: !!effectiveUserId && !authLoading,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
   });
 
   return {

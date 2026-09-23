@@ -38,7 +38,7 @@ export const ActivityItemRow: React.FC<ActivityItemRowProps> = ({
             onClick={() =>
               onToggleTask && onToggleTask(item.id, !item.completed)
             }
-            className={`w-6 h-6 rounded-full border flex items-center justify-center transition-colors ${
+            className={`w-11 h-11 rounded-full border flex items-center justify-center transition-colors ${
               item.completed
                 ? "bg-emerald-600 border-emerald-600 text-white"
                 : "border-gray-300 hover:border-emerald-500"

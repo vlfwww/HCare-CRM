@@ -27,9 +27,9 @@ export const PatientListPage: React.FC<PatientListPageProps> = ({
   }
 
   return (
-    <div className="max-w-[1400px] mx-auto px-6 py-6 font-manrope">
-      <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
-        <div className="flex justify-between items-center mb-6">
+    <div className="max-w-[1400px] mx-auto px-3 sm:px-6 py-4 sm:py-6 font-manrope">
+      <div className="bg-white rounded-2xl border border-gray-200 p-4 sm:p-8 shadow-sm">
+        <div className="flex flex-wrap gap-3 justify-between items-start mb-6">
           <div>
             <h2 className="text-xl font-bold text-gray-800">
               Patients Directory
@@ -44,10 +44,10 @@ export const PatientListPage: React.FC<PatientListPageProps> = ({
         </div>
 
         {patients.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+          <div className="overflow-x-hidden">
+            <table className="w-full table-fixed text-left border-collapse">
               <thead>
-                <tr className="border-b border-gray-100 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                <tr className="border-b border-gray-100 text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   <th className="py-3 px-4">Patient Name</th>
                   <th className="py-3 px-4">Gender</th>
                   <th className="py-3 px-4">Birth Date</th>
@@ -60,11 +60,13 @@ export const PatientListPage: React.FC<PatientListPageProps> = ({
                     key={patient.id}
                     className="hover:bg-gray-50/60 transition-colors"
                   >
-                    <td className="py-4 px-4 font-medium text-gray-800 flex items-center gap-3">
+                    <td className="py-4 px-2 sm:px-4 font-medium text-gray-800">
+                      <div className="flex items-center gap-2 min-w-0">
                       <div className="w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center font-bold justify-center text-xs">
                         {patient.fullName.slice(0, 2).toUpperCase()}
                       </div>
-                      {patient.fullName}
+                      <span className="break-words">{patient.fullName}</span>
+                      </div>
                     </td>
                     <td className="py-4 px-4 text-gray-600">
                       {patient.personalInfo?.gender || "Not specified"}
@@ -72,10 +74,11 @@ export const PatientListPage: React.FC<PatientListPageProps> = ({
                     <td className="py-4 px-4 text-gray-600">
                       {patient.personalInfo?.birthDate || "Not specified"}
                     </td>
-                    <td className="py-4 px-4">
+                    <td className="py-4 px-2 sm:px-4">
                       <button
+                        type="button"
                         onClick={() => onSelectPatient(patient.id)}
-                        className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3.5 py-1.5 rounded-lg transition-colors cursor-pointer shadow-sm"
+                        className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3.5 py-2.5 rounded-lg transition-colors cursor-pointer shadow-sm"
                       >
                         View Profile & Care Plan
                       </button>

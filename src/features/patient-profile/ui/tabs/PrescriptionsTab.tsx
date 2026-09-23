@@ -160,9 +160,9 @@ export const PrescriptionsTab: React.FC<PrescriptionsTabProps> = ({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {prescriptions.length === 0 ? (
-          <div className="col-span-full py-12 text-center text-gray-400 bg-white rounded-xl border border-gray-200">
+          <div className="col-span-full py-12 text-center text-gray-600 bg-white rounded-xl border border-gray-200">
             <p className="font-medium">No active prescriptions found.</p>
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-xs text-gray-600 mt-1">
               {isDoctor
                 ? "Use the button above to issue a prescription."
                 : "Prescriptions added by your doctor will show up here."}
@@ -179,7 +179,7 @@ export const PrescriptionsTab: React.FC<PrescriptionsTabProps> = ({
                   <h4 className="font-bold text-gray-800 text-sm">
                     {item.medicationName}
                   </h4>
-                  <p className="text-[11px] text-emerald-600 font-medium mt-0.5">
+                  <p className="text-[11px] text-emerald-700 font-medium mt-0.5">
                     Active Prescription
                   </p>
                 </div>
