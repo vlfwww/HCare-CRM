@@ -4,7 +4,7 @@ import { Link } from "@tanstack/react-router";
 import { useAuth } from "@/shared/lib/useAuth";
 
 export const Home: React.FC = () => {
-  const { user } = useAuth();
+  const { user, isDoctor, loading } = useAuth();
 
   return (
     <div className="max-w-[1400px] mx-auto px-6 py-12 font-manrope">
@@ -24,7 +24,7 @@ export const Home: React.FC = () => {
         </p>
 
         <div className="flex justify-center gap-4">
-          {user ? (
+          {user && !loading && !isDoctor ? (
             <Link
               to="/medical-staff"
               className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 text-white rounded-xl font-semibold text-sm hover:bg-emerald-600 transition-colors shadow-sm cursor-pointer shadow-emerald-500/20"

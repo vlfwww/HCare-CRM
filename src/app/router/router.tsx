@@ -14,7 +14,7 @@ import {
   createHashHistory,
   useNavigate,
 } from "@tanstack/react-router";
-import { ProtectedRoute } from "./ProtectedRoute";
+import { ProtectedRoute, RoleRoute } from "./ProtectedRoute";
 import { useAuth } from "@/shared/lib/useAuth";
 
 export const rootRoute = createRootRoute({
@@ -37,12 +37,6 @@ export const registerRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/register",
   component: RegisterPage,
-});
-
-export const feedbackRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/feedback",
-  component: FeedbackPage,
 });
 
 export const authenticatedRoute = createRoute({
@@ -80,11 +74,13 @@ export const patientsListRoute = createRoute({
   component: function PatientsListRoute() {
     const navigate = useNavigate();
     return (
-      <PatientListPage
-        onSelectPatient={(patientId) => {
-          void navigate({ to: `/patients/${patientId}` });
-        }}
-      />
+      <RoleRoute doctorOnly>
+        <PatientListPage
+          onSelectPatient={(patientId) => {
+            void navigate({ to: `/patients/${patientId}` });
+          }}
+        />
+      </RoleRoute>
     );
   },
 });
@@ -94,14 +90,34 @@ export const patientDetailRoute = createRoute({
   path: "/patients/$patientId",
   component: () => {
     const { patientId } = patientDetailRoute.useParams();
-    return <PatientProfilePage targetUserId={patientId} />;
+    return (
+      <RoleRoute doctorOnly>
+        <PatientProfilePage targetUserId={patientId} />
+      </RoleRoute>
+    );
   },
 });
 
 export const medicalStaffRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/medical-staff",
-  component: MedicalStaffPage,
+  component: () => (
+    <RoleRoute patientOnly>
+      <MedicalStaffPage />
+    </RoleRoute>
+  ),
+});
+
+export const feedbackRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/feedback",
+  component: function FeedbackRoute() {
+    return (
+      <RoleRoute patientOnly>
+        <FeedbackPage />
+      </RoleRoute>
+    );
+  },
 });
 
 const routeTree = rootRoute.addChildren([
@@ -111,8 +127,8 @@ const routeTree = rootRoute.addChildren([
     patientsListRoute,
     patientDetailRoute,
     medicalStaffRoute,
+    feedbackRoute,
   ]),
-  feedbackRoute,
   loginRoute,
   registerRoute,
 ]);
