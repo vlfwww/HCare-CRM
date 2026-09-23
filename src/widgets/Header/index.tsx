@@ -39,7 +39,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
   };
 
   return (
-    <header className="w-full bg-white border-b border-gray-200 px-3 sm:px-8 py-3.5 flex items-center justify-between shadow-xs font-poppins z-35">
+    <header className="w-full bg-white border-b border-gray-200 px-3 sm:px-8 py-3.5 flex items-center justify-between shadow-xs font-manrope z-35">
       <div className="flex items-center gap-6">
         <button
           onClick={onToggleSidebar}
@@ -151,7 +151,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
             </Link>
             <Link
               to="/register"
-              className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold rounded-xl shadow-md shadow-emerald-500/20 transition-colors"
+              className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold rounded-xl shadow-md shadow-emerald-700/20 transition-colors"
             >
               Sign Up
             </Link>

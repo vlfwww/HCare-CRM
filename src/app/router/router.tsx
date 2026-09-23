@@ -1,11 +1,4 @@
-import { LoginPage } from "@/features/auth/ui/LoginPage";
-import { RegisterPage } from "@/features/auth/ui/RegisterPage";
-import { FeedbackPage } from "@/features/feedback/ui/FeedbackPage";
 import { Home } from "@/features/home/ui/HomePage";
-import { MedicalStaffPage } from "@/features/medical-staff/ui/MedicalStaffPage";
-import { PatientProfilePage } from "@/features/patient-profile/ui/PatientProfilePage";
-import { PatientListPage } from "@/features/patient-list/ui/PatientListPage";
-import { DoctorDashboardPage } from "@/features/doctor-dashboard/ui/DoctorDashboardPage";
 import { RootLayout } from "@/widgets/Layout/RootLayout";
 import {
   createRootRoute,
@@ -16,6 +9,16 @@ import {
 } from "@tanstack/react-router";
 import { ProtectedRoute, RoleRoute } from "./ProtectedRoute";
 import { useAuth } from "@/shared/lib/useAuth";
+import {
+  DoctorDashboardPage,
+  FeedbackPage,
+  LoginPage,
+  MedicalStaffPage,
+  PatientListPage,
+  PatientProfilePage,
+  RegisterPage,
+  Suspended,
+} from "./lazyPages";
 
 export const rootRoute = createRootRoute({
   component: RootLayout,
@@ -30,13 +33,21 @@ export const homeRoute = createRoute({
 export const loginRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/login",
-  component: LoginPage,
+  component: () => (
+    <Suspended>
+      <LoginPage />
+    </Suspended>
+  ),
 });
 
 export const registerRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/register",
-  component: RegisterPage,
+  component: () => (
+    <Suspended>
+      <RegisterPage />
+    </Suspended>
+  ),
 });
 
 export const authenticatedRoute = createRoute({
@@ -62,9 +73,17 @@ export const profileRoute = createRoute({
       );
     }
     if (isDoctor) {
-      return <DoctorDashboardPage />;
+      return (
+        <Suspended>
+          <DoctorDashboardPage />
+        </Suspended>
+      );
     }
-    return <PatientProfilePage />;
+    return (
+      <Suspended>
+        <PatientProfilePage />
+      </Suspended>
+    );
   },
 });
 
@@ -74,13 +93,15 @@ export const patientsListRoute = createRoute({
   component: function PatientsListRoute() {
     const navigate = useNavigate();
     return (
-      <RoleRoute doctorOnly>
-        <PatientListPage
-          onSelectPatient={(patientId) => {
-            void navigate({ to: `/patients/${patientId}` });
-          }}
-        />
-      </RoleRoute>
+      <Suspended>
+        <RoleRoute doctorOnly>
+          <PatientListPage
+            onSelectPatient={(patientId) => {
+              void navigate({ to: `/patients/${patientId}` });
+            }}
+          />
+        </RoleRoute>
+      </Suspended>
     );
   },
 });
@@ -91,9 +112,11 @@ export const patientDetailRoute = createRoute({
   component: () => {
     const { patientId } = patientDetailRoute.useParams();
     return (
-      <RoleRoute doctorOnly>
-        <PatientProfilePage targetUserId={patientId} />
-      </RoleRoute>
+      <Suspended>
+        <RoleRoute doctorOnly>
+          <PatientProfilePage targetUserId={patientId} />
+        </RoleRoute>
+      </Suspended>
     );
   },
 });
@@ -102,9 +125,11 @@ export const medicalStaffRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/medical-staff",
   component: () => (
-    <RoleRoute patientOnly>
-      <MedicalStaffPage />
-    </RoleRoute>
+    <Suspended>
+      <RoleRoute patientOnly>
+        <MedicalStaffPage />
+      </RoleRoute>
+    </Suspended>
   ),
 });
 
@@ -113,9 +138,11 @@ export const feedbackRoute = createRoute({
   path: "/feedback",
   component: function FeedbackRoute() {
     return (
-      <RoleRoute patientOnly>
-        <FeedbackPage />
-      </RoleRoute>
+      <Suspended>
+        <RoleRoute patientOnly>
+          <FeedbackPage />
+        </RoleRoute>
+      </Suspended>
     );
   },
 });
