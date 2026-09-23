@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { db } from "@/app/providers/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDoc, getDocs, doc } from "firebase/firestore";
 import type { StaffMember } from "@/entities/staff/model/types";
 import type { AppointmentItem } from "@/features/patient-profile/model/types";
 
@@ -94,11 +94,11 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
       }
 
       try {
-        const usersSnapshot = await getDocs(collection(db, "users"));
+        const userSnapshot = await getDoc(doc(db, "users", userId));
         const booked: string[] = [];
 
-        usersSnapshot.docs.forEach((userDoc) => {
-          const userData = userDoc.data();
+        if (userSnapshot.exists()) {
+          const userData = userSnapshot.data();
           const userAppointments = userData.appointments || [];
 
           if (Array.isArray(userAppointments)) {
@@ -114,7 +114,7 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
               }
             });
           }
-        });
+        }
 
         setBookedSlots(booked);
       } catch (error) {

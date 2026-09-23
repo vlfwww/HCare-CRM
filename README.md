@@ -70,6 +70,20 @@ The application URL is
 `https://vlfwww.github.io/HCare-CRM/`. The Vite base path is enabled only in
 GitHub Actions, so local development continues to use `/`.
 
+Firestore rules are stored in [`firestore.rules`](./firestore.rules) and must
+be deployed to the same Firebase project separately, for example with the
+Firebase CLI:
+
+```bash
+firebase use hcare-8158
+firebase deploy --only firestore:rules
+```
+
+Each doctor document in `medical-staff` must use that doctor's Firebase Auth
+UID as its document ID and contain `role: "Doctor"`. Appointments store the
+doctor document ID in `doctorId`, which prevents a doctor from seeing another
+doctor's appointments.
+
 ## Quality status
 
 Linting, type-checking, production builds, and unit tests are intended to run

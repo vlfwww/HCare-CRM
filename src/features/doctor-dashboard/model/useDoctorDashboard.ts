@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import {
   collection,
-  query,
-  where,
   getDocs,
   doc,
   getDoc,
@@ -48,23 +46,14 @@ export const useDoctorDashboard = () => {
       let foundDocId: string | null = null;
       let docData: Record<string, unknown> | null = null;
 
-      const qRole = query(
-        collection(db, "medical-staff"),
-        where("role", "==", "Doctor"),
-      );
-      const roleSnap = await getDocs(qRole);
-
-      if (!roleSnap.empty) {
-        const targetDoc = roleSnap.docs[0];
-        foundDocId = targetDoc.id;
-        docData = targetDoc.data() as Record<string, unknown>;
-      } else {
-        const directRef = doc(db, "medical-staff", user.uid);
-        const directSnap = await getDoc(directRef);
-        if (directSnap.exists()) {
-          foundDocId = user.uid;
-          docData = directSnap.data() as Record<string, unknown>;
-        }
+      const directRef = doc(db, "medical-staff", user.uid);
+      const directSnap = await getDoc(directRef);
+      if (
+        directSnap.exists() &&
+        directSnap.data().role?.toString().trim().toLowerCase() === "doctor"
+      ) {
+        foundDocId = user.uid;
+        docData = directSnap.data() as Record<string, unknown>;
       }
 
       const doctorName =
@@ -83,9 +72,10 @@ export const useDoctorDashboard = () => {
             if (typeof app !== "object" || app === null) return;
             const appointment = app as Record<string, unknown>;
             const isForThisDoctor =
-              typeof appointment.doctorName !== "string" ||
-              appointment.doctorName.trim().toLowerCase() ===
-                doctorName.trim().toLowerCase();
+              appointment.doctorId === foundDocId ||
+              (typeof appointment.doctorName === "string" &&
+                appointment.doctorName.trim().toLowerCase() ===
+                  doctorName.trim().toLowerCase());
 
             if (isForThisDoctor) {
               doctorAppointments.push({

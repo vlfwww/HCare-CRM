@@ -1,0 +1,37 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isDoctor() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/medical-staff/$(request.auth.uid))
+        && get(/databases/$(database)/documents/medical-staff/$(request.auth.uid)).data.role == 'Doctor';
+    }
+
+    match /medical-staff/{staffId} {
+      allow read: if signedIn();
+      allow create, update: if signedIn() && request.auth.uid == staffId;
+      allow delete: if false;
+    }
+
+    match /users/{userId} {
+      allow read, create, update: if signedIn()
+        && (request.auth.uid == userId || isDoctor());
+      allow delete: if false;
+
+      match /{subcollection}/{documentId} {
+        allow read, write: if signedIn()
+          && (request.auth.uid == userId || isDoctor());
+      }
+    }
+
+    match /availableSurveys/{surveyId} {
+      allow read: if signedIn();
+      allow write: if isDoctor();
+    }
+  }
+}
