@@ -3,6 +3,7 @@ import { X } from "lucide-react";
 import { db } from "@/app/providers/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import type { StaffMember } from "@/entities/staff/model/types";
+import type { AppointmentItem } from "@/features/patient-profile/model/types";
 
 interface AppointmentModalProps {
   isOpen: boolean;
@@ -11,7 +12,7 @@ interface AppointmentModalProps {
   patientName: string;
   patientDob: string;
   initialDoctorId?: string;
-  onAppointmentCreated: (newAppointment: any) => void;
+  onAppointmentCreated: (newAppointment: AppointmentItem) => void;
 }
 
 export const AppointmentModal: React.FC<AppointmentModalProps> = ({
@@ -52,16 +53,16 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
       try {
         const querySnapshot = await getDocs(collection(db, "medical-staff"));
         const staffList: StaffMember[] = querySnapshot.docs.map((docSnap) => {
-          const data = docSnap.data() as any;
+          const data = docSnap.data() as Record<string, unknown>;
           return {
             id: docSnap.id,
-            name: data.name || "",
-            role: data.role || "",
-            hospital: data.hospital || "",
-            location: data.location || "",
-            availableHours: data.availableHours || "",
-            confirmation: data.confirmation || "",
-            avatarUrl: data.avatarUrl || "",
+            name: typeof data.name === "string" ? data.name : "",
+            role: typeof data.role === "string" ? data.role : "",
+            hospital: typeof data.hospital === "string" ? data.hospital : "",
+            location: typeof data.location === "string" ? data.location : "",
+            availableHours: typeof data.availableHours === "string" ? data.availableHours : "",
+            confirmation: typeof data.confirmation === "string" ? data.confirmation : "",
+            avatarUrl: typeof data.avatarUrl === "string" ? data.avatarUrl : "",
           };
         });
         setDoctors(staffList);
@@ -101,9 +102,12 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
           const userAppointments = userData.appointments || [];
 
           if (Array.isArray(userAppointments)) {
-            userAppointments.forEach((app: any) => {
-              if (app.doctorName === selectedDoctor.name && app.startTime) {
-                const [datePart, timePart] = app.startTime.split(" ");
+            userAppointments.forEach((app: unknown) => {
+              if (typeof app !== "object" || app === null) return;
+              const appointment = app as Record<string, unknown>;
+              if (appointment.doctorName === selectedDoctor.name &&
+                typeof appointment.startTime === "string") {
+                const [datePart, timePart] = appointment.startTime.split(" ");
                 if (datePart === selectedDate && timePart) {
                   booked.push(timePart);
                 }

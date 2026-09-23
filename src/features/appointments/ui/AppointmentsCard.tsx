@@ -55,7 +55,7 @@ export const AppointmentsCard: React.FC<AppointmentsCardProps> = ({
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {appointments.map((app) => {
+              {appointments.map((app, index) => {
                 const rawTime =
                   app.startTime || `${app.date || ""} ${app.time || ""}`.trim();
                 const [datePart, timePart] = rawTime.split(" ");
@@ -63,7 +63,7 @@ export const AppointmentsCard: React.FC<AppointmentsCardProps> = ({
                 const status = app.status || "Pending";
 
                 return (
-                  <tr key={app.id || Math.random()}>
+                  <tr key={app.id || `appointment-${index}`}>
                     <td className="py-4 px-6 text-gray-800 font-medium">
                       <div>{datePart || rawTime}</div>
                       {timePart && (

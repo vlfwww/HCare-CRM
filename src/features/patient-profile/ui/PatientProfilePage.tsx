@@ -20,11 +20,12 @@ export const PatientProfilePage: React.FC<PatientProfilePageProps> = ({
 }) => {
   const {
     userId,
-    data,
     isLoading,
     error,
     isModalOpen,
     profileData,
+    isProfileComplete,
+    updateAvatar,
     availableSurveys,
     feedbacks,
     isDoctor,
@@ -76,6 +77,10 @@ export const PatientProfilePage: React.FC<PatientProfilePageProps> = ({
             fullName={profileData.fullName}
             role={profileData.role}
             avatarUrl={profileData.avatarUrl}
+            canEdit={canEditProfile}
+            onAvatarChange={(avatarUrl) => {
+              void updateAvatar(avatarUrl);
+            }}
           />
 
           {canEditProfile && (
@@ -83,7 +88,7 @@ export const PatientProfilePage: React.FC<PatientProfilePageProps> = ({
               onClick={handleOpenModal}
               className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors shadow-sm cursor-pointer"
             >
-              {data ? "Edit Profile" : "Complete Profile!"}
+              {isProfileComplete ? "Edit Profile" : "Complete Profile!"}
             </button>
           )}
         </div>

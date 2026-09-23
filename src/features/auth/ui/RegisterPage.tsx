@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import {
   createUserWithEmailAndPassword,
-  GoogleAuthProvider,
-  signInWithPopup,
 } from "firebase/auth";
 import { auth } from "@/app/providers/firebase";
+import { ensurePatientProfile } from "@/shared/lib/ensurePatientProfile";
+import { signInWithGoogle } from "../model/useGoogleAuth";
+import { getAuthErrorMessage } from "../model/authError";
 import { useNavigate, Link } from "@tanstack/react-router";
 import { Activity, Loader2, AlertCircle } from "lucide-react";
 
@@ -22,10 +23,11 @@ export const RegisterPage: React.FC = () => {
     setLoading(true);
 
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const result = await createUserWithEmailAndPassword(auth, email, password);
+      await ensurePatientProfile(result.user);
       await navigate({ to: "/", replace: true });
-    } catch (err: any) {
-      setError(err.message || "Registration failed");
+    } catch (error: unknown) {
+      setError(getAuthErrorMessage(error, "Не удалось создать аккаунт."));
       setLoading(false);
     }
   };
@@ -33,13 +35,11 @@ export const RegisterPage: React.FC = () => {
   const handleGoogleRegister = async () => {
     setError("");
     setGoogleLoading(true);
-    const provider = new GoogleAuthProvider();
-
     try {
-      await signInWithPopup(auth, provider);
+      await signInWithGoogle();
       await navigate({ to: "/", replace: true });
-    } catch (err: any) {
-      setError(err.message || "Google sign-up failed");
+    } catch (error: unknown) {
+      setError(getAuthErrorMessage(error, "Не удалось зарегистрироваться через Google."));
       setGoogleLoading(false);
     }
   };

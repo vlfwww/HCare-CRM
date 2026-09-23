@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { useQuery } from "@tanstack/react-query";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/app/providers/firebase";
 
 export interface PatientUser {
@@ -15,45 +15,65 @@ export interface PatientUser {
   avatarUrl?: string;
 }
 
-export const usePatientList = () => {
-  const [patients, setPatients] = useState<PatientUser[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchPatients = async () => {
-      try {
-        setIsLoading(true);
-        const q = query(
-          collection(db, "users"),
-          where("role", "==", "Patient"),
+const fetchPatients = async (): Promise<PatientUser[]> => {
+  const [usersSnapshot, staffSnapshot] = await Promise.all([
+    getDocs(collection(db, "users")),
+    getDocs(collection(db, "medical-staff")),
+  ]);
+  const doctorIds = new Set(
+    staffSnapshot.docs
+      .filter((docSnap) => {
+        const role = docSnap.data().role;
+        return (
+          typeof role === "string" && role.trim().toLowerCase() === "doctor"
         );
-        const querySnapshot = await getDocs(q);
+      })
+      .map((docSnap) => docSnap.id),
+  );
 
-        const patientList: PatientUser[] = [];
-        querySnapshot.forEach((docSnap) => {
-          const data = docSnap.data();
-          patientList.push({
-            id: docSnap.id,
-            fullName: data.fullName || "Unnamed Patient",
-            email: data.contactInfo?.email || data.email,
-            role: data.role,
-            personalInfo: data.personalInfo,
-            avatarUrl: data.avatarUrl || "",
-          });
-        });
+  return usersSnapshot.docs.filter((docSnap) => {
+    const role = docSnap.data().role;
+    return (
+      !doctorIds.has(docSnap.id) &&
+      typeof role === "string" &&
+      role.trim().toLowerCase() === "patient"
+    );
+  }).map((docSnap) => {
+    const data = docSnap.data();
+    const contactInfo =
+      typeof data.contactInfo === "object" && data.contactInfo !== null
+        ? data.contactInfo
+        : {};
 
-        setPatients(patientList);
-      } catch (err: any) {
-        console.error("Error fetching patients:", err);
-        setError(err.message || "Failed to load patients");
-      } finally {
-        setIsLoading(false);
-      }
+    return {
+      id: docSnap.id,
+      fullName:
+        typeof data.fullName === "string" ? data.fullName : "Unnamed Patient",
+      email:
+        typeof contactInfo.email === "string"
+          ? contactInfo.email
+          : typeof data.email === "string"
+            ? data.email
+            : undefined,
+      role: typeof data.role === "string" ? data.role : "Patient",
+      personalInfo:
+        typeof data.personalInfo === "object" && data.personalInfo !== null
+          ? data.personalInfo
+          : undefined,
+      avatarUrl: typeof data.avatarUrl === "string" ? data.avatarUrl : "",
     };
+  });
+};
 
-    void fetchPatients();
-  }, []);
+export const usePatientList = () => {
+  const queryResult = useQuery({
+    queryKey: ["patients"],
+    queryFn: fetchPatients,
+  });
 
-  return { patients, isLoading, error };
+  return {
+    patients: queryResult.data ?? [],
+    isLoading: queryResult.isLoading,
+    error: queryResult.error instanceof Error ? queryResult.error.message : null,
+  };
 };

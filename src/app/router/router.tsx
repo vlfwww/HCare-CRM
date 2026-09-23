@@ -53,7 +53,7 @@ export const authenticatedRoute = createRoute({
 export const profileRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/profile",
-  component: () => {
+  component: function ProfileRoute() {
     const { isDoctor } = useAuth();
     if (isDoctor) {
       return <DoctorDashboardPage />;
@@ -65,7 +65,7 @@ export const profileRoute = createRoute({
 export const patientsListRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/patients",
-  component: () => {
+  component: function PatientsListRoute() {
     const navigate = useNavigate();
     return (
       <PatientListPage

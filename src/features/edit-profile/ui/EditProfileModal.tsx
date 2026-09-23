@@ -1,10 +1,11 @@
 import React from "react";
 import { useEditProfileModal } from "../model/useEditProfileModal";
+import type { PatientProfileData } from "@/entities/patient/model/types";
 
 interface EditProfileModalProps {
   isOpen: boolean;
   onClose: () => void;
-  initialData: any;
+  initialData: PatientProfileData;
 }
 
 export const EditProfileModal: React.FC<EditProfileModalProps> = ({

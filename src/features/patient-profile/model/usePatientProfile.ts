@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { auth, db } from "@/app/providers/firebase";
+import { useQueryClient } from "@tanstack/react-query";
+import { db } from "@/app/providers/firebase";
 import {
   doc,
   updateDoc,
@@ -18,6 +19,7 @@ import type { AppointmentItem } from "../model/types";
 import { useAuth } from "@/shared/lib/useAuth";
 import type { PghdItem } from "../ui/tabs/PghdTab";
 import type { PrescriptionItem } from "../ui/tabs/PrescriptionsTab";
+import { isPatientProfileComplete } from "@/shared/lib/profileCompletion";
 
 interface CarePlanItem {
   title: string;
@@ -45,8 +47,9 @@ function calculateAge(birthDateString?: string): number {
 }
 
 export const usePatientProfile = (targetUserId?: string) => {
-  const { isDoctor, loading: authLoading } = useAuth();
-  const userId = targetUserId || auth.currentUser?.uid || "";
+  const queryClient = useQueryClient();
+  const { user, isDoctor, loading: authLoading } = useAuth();
+  const userId = targetUserId || user?.uid || "";
 
   const { data, isLoading: dataLoading, error } = usePatientData(targetUserId);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -181,11 +184,17 @@ export const usePatientProfile = (targetUserId?: string) => {
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
+  const updateAvatar = async (avatarUrl: string) => {
+    if (!userId || isDoctor) return;
+    await updateDoc(doc(db, "users", userId), { avatarUrl });
+    await queryClient.invalidateQueries({ queryKey: ["patient", userId] });
+  };
 
   const fullNameValue =
-    data?.fullName || auth.currentUser?.displayName || "New Patient";
+    data?.fullName || user?.displayName || "";
 
   const rawProfileData = data || {
+    id: userId,
     fullName: fullNameValue,
     role: "Patient",
     avatarUrl: "",
@@ -214,7 +223,12 @@ export const usePatientProfile = (targetUserId?: string) => {
       ...rawProfileData.personalInfo,
       age: calculateAge(rawProfileData.personalInfo?.birthDate),
     },
+  } as typeof rawProfileData & {
+    appointments: AppointmentItem[];
+    surveys: typeof surveys;
+    carePlans: CarePlanItem[];
   };
+  const isProfileComplete = isPatientProfileComplete(profileData);
 
   return {
     userId,
@@ -223,6 +237,8 @@ export const usePatientProfile = (targetUserId?: string) => {
     error,
     isModalOpen,
     profileData,
+    isProfileComplete,
+    updateAvatar,
     availableSurveys,
     feedbacks,
     isDoctor,

@@ -26,7 +26,7 @@ export const MissingFieldBadge: React.FC<MissingFieldBadgeProps> = ({
 
       {showTooltip && (
         <div className="absolute left-5 bottom-0 z-20 bg-gray-900 text-white text-[11px] px-2 py-1 rounded shadow-lg whitespace-nowrap">
-          Required: {fieldName} (Click to fill)
+          MISSING DATA: {fieldName}
         </div>
       )}
     </div>

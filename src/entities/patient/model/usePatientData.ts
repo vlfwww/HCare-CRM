@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { doc, getDoc } from "firebase/firestore";
-import { db, auth } from "@/app/providers/firebase";
+import { db } from "@/app/providers/firebase";
+import { useAuth } from "@/shared/lib/useAuth";
 
 export interface PatientData {
   fullName: string;
@@ -63,11 +64,8 @@ export interface PatientData {
 }
 
 const fetchPatientDataFromFirebase = async (
-  targetUserId?: string,
+  effectiveUserId: string,
 ): Promise<PatientData | null> => {
-  const currentUser = auth.currentUser;
-  const effectiveUserId = targetUserId || currentUser?.uid;
-
   if (!effectiveUserId) {
     throw new Error("No authenticated user found or target ID provided");
   }
@@ -83,13 +81,13 @@ const fetchPatientDataFromFirebase = async (
 };
 
 export const usePatientData = (targetUserId?: string) => {
-  const currentUser = auth.currentUser;
-  const effectiveUserId = targetUserId || currentUser?.uid;
+  const { user, loading: authLoading } = useAuth();
+  const effectiveUserId = targetUserId || user?.uid;
 
   const query = useQuery({
     queryKey: ["patient", effectiveUserId || "guest"],
-    queryFn: () => fetchPatientDataFromFirebase(targetUserId),
-    enabled: !!effectiveUserId,
+    queryFn: () => fetchPatientDataFromFirebase(effectiveUserId || ""),
+    enabled: !!effectiveUserId && !authLoading,
   });
 
   return {

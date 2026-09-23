@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useDoctorDashboard } from "../model/useDoctorDashboard";
 import { EditDoctorProfileModal } from "./EditDoctorProfileModal";
-import { MapPin, Building2, Clock, Calendar } from "lucide-react";
+import { MapPin, Building2, Clock, Calendar, Camera, UserRound } from "lucide-react";
 
 export const DoctorDashboardPage: React.FC = () => {
   const {
@@ -11,8 +11,26 @@ export const DoctorDashboardPage: React.FC = () => {
     error,
     refreshData,
     updateAppointmentStatus,
+    updateAvatar,
   } = useDoctorDashboard();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+
+  const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !file.type.startsWith("image/") || file.size > 700 * 1024) {
+      event.target.value = "";
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        void updateAvatar(reader.result);
+      }
+    };
+    reader.readAsDataURL(file);
+    event.target.value = "";
+  };
 
   if (isLoading) {
     return (
@@ -37,17 +55,32 @@ export const DoctorDashboardPage: React.FC = () => {
       <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8 pb-6 border-b border-gray-100">
           <div className="flex items-center gap-4">
-            {data.avatarUrl ? (
-              <img
-                src={data.avatarUrl}
-                alt={data.name}
-                className="w-16 h-16 rounded-full object-cover border border-gray-200"
-              />
-            ) : (
-              <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xl font-bold">
-                {data.name.slice(0, 2).toUpperCase()}
-              </div>
-            )}
+            <button
+              type="button"
+              onClick={() => avatarInputRef.current?.click()}
+              className="relative w-16 h-16 rounded-full overflow-hidden border border-gray-200 bg-gray-100 flex items-center justify-center text-gray-400 cursor-pointer group"
+              title="Change profile photo"
+            >
+              {data.avatarUrl ? (
+                <img
+                  src={data.avatarUrl}
+                  alt={data.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <UserRound className="w-8 h-8" />
+              )}
+              <span className="absolute inset-0 hidden group-hover:flex items-center justify-center bg-black/45 text-white">
+                <Camera className="w-5 h-5" />
+              </span>
+            </button>
+            <input
+              ref={avatarInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleAvatarChange}
+            />
             <div>
               <h1 className="text-2xl font-bold text-gray-800">{data.name}</h1>
               <p className="text-sm text-emerald-600 font-medium">

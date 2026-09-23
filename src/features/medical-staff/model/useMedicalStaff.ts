@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { auth, db } from "@/app/providers/firebase";
 import { doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { useStaffQuery } from "./useStaffQuery";
+import type { AppointmentItem } from "@/features/patient-profile/model/types";
 
 export const useMedicalStaff = () => {
   const { data: staffList, isLoading, isError } = useStaffQuery();
@@ -64,7 +65,7 @@ export const useMedicalStaff = () => {
     setSelectedDoctorId("");
   };
 
-  const handleAppointmentCreated = async (newAppointment: any) => {
+  const handleAppointmentCreated = async (newAppointment: AppointmentItem) => {
     if (!userId) return;
     try {
       const userRef = doc(db, "users", userId);

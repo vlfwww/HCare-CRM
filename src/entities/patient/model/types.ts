@@ -1,5 +1,5 @@
 export interface PatientProfileData {
-  id: string;
+  id?: string;
   fullName: string;
   role: string;
   avatarUrl: string;
@@ -24,8 +24,8 @@ export interface PatientProfileData {
   };
   appointments: Array<{
     id: string;
-    startTime: string;
-    speciality: string;
-    status: "Cancelled" | "Confirmed" | "Pending";
+    startTime?: string;
+    speciality?: string;
+    status?: string;
   }>;
 }

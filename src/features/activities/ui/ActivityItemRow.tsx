@@ -9,7 +9,9 @@ import {
 } from "lucide-react";
 import type { ActivityItem } from "../../patient-profile/model/types";
 
-const iconMap: Record<string, any> = {
+type IconComponent = React.ComponentType<{ className?: string }>;
+
+const iconMap: Record<string, IconComponent> = {
   Mail,
   Calendar,
   PhoneCall,

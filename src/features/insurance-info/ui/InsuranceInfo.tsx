@@ -97,7 +97,7 @@ export const InsuranceInfo: React.FC<InsuranceInfoProps> = ({
           ) : (
             <p className="text-sm font-semibold text-gray-800">
               {initialMemberId || (
-                <span className="text-red-500 text-xs">Missing data</span>
+                <span className="text-red-500 text-xs">MISSING DATA</span>
               )}
             </p>
           )}
@@ -133,7 +133,7 @@ export const InsuranceInfo: React.FC<InsuranceInfoProps> = ({
           ) : (
             <p className="text-sm font-semibold text-gray-800">
               {initialProvider || (
-                <span className="text-red-500 text-xs">Missing data</span>
+                <span className="text-red-500 text-xs">MISSING DATA</span>
               )}
             </p>
           )}

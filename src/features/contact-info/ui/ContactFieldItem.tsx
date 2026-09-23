@@ -57,7 +57,7 @@ export const ContactFieldItem: React.FC<ContactFieldItemProps> = ({
             renderDisplayValue()
           ) : isEmpty ? (
             <span className="text-red-500 text-xs font-normal">
-              Missing data
+              MISSING DATA
             </span>
           ) : (
             value || "-"

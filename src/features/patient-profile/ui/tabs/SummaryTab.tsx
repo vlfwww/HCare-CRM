@@ -7,15 +7,18 @@ import { ContactPreferencesCard } from "@/features/contact-preferences/ui/Contac
 import { InsuranceInfo } from "@/features/insurance-info/ui/InsuranceInfo";
 import { AppointmentsCard } from "@/features/appointments/ui/AppointmentsCard";
 import { FeedbackCard } from "@/features/feedback/ui/FeedbackCard";
+import type { PatientProfileData } from "@/entities/patient/model/types";
+import type { AppointmentItem, SurveyItem } from "../../model/types";
+import type { FeedbackItem } from "@/features/feedback/model/types";
 
 interface SummaryTabProps {
   userId: string;
-  profileData: any;
-  availableSurveys: any[];
-  feedbacks: any[];
+  profileData: PatientProfileData & { surveys?: SurveyItem[] };
+  availableSurveys: string[];
+  feedbacks: FeedbackItem[];
   onEditProfile?: () => void;
-  onAppointmentCreated: (newApp: any) => void;
-  onSurveyCreated: (newSurvey: any) => void;
+  onAppointmentCreated: (newApp: AppointmentItem) => void;
+  onSurveyCreated: (newSurvey: Omit<SurveyItem, "id">) => void;
 }
 
 export const SummaryTab: React.FC<SummaryTabProps> = ({
@@ -35,8 +38,12 @@ export const SummaryTab: React.FC<SummaryTabProps> = ({
         <ContactInfo
           data={profileData.contactInfo}
           fullName={profileData.fullName}
+          onEdit={onEditProfile}
         />
-        <PersonalInfo data={profileData.personalInfo} />
+        <PersonalInfo
+          data={profileData.personalInfo}
+          onEdit={onEditProfile}
+        />
       </div>
 
       <div className="space-y-6">
@@ -58,7 +65,7 @@ export const SummaryTab: React.FC<SummaryTabProps> = ({
         />
         <SurveysCard
           userId={userId}
-          surveys={profileData.surveys}
+          surveys={profileData.surveys || []}
           availableSurveys={availableSurveys}
           onSurveyCreated={isDoctorView ? undefined : onSurveyCreated}
         />

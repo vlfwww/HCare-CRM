@@ -2,13 +2,16 @@ import { useState, useEffect } from "react";
 import { auth, db } from "@/app/providers/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { useQueryClient } from "@tanstack/react-query";
+import type { PatientProfileData } from "@/entities/patient/model/types";
 
 export const useEditProfileModal = (
-  initialData: any,
+  initialData: PatientProfileData,
   isOpen: boolean,
   onClose: () => void,
 ) => {
-  const [formData, setFormData] = useState(initialData);
+  const [formData, setFormData] = useState<
+    PatientProfileData & Record<string, unknown>
+  >(initialData as PatientProfileData & Record<string, unknown>);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const queryClient = useQueryClient();
 
@@ -61,7 +64,10 @@ export const useEditProfileModal = (
       setFormData({
         ...formData,
         [section]: {
-          ...formData[section],
+          ...(typeof formData[section] === "object" &&
+          formData[section] !== null
+            ? formData[section]
+            : {}),
           [field]: value,
         },
       });

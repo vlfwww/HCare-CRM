@@ -46,7 +46,7 @@ export const useDoctorDashboard = () => {
       setError(null);
 
       let foundDocId: string | null = null;
-      let docData: any = null;
+      let docData: Record<string, unknown> | null = null;
 
       const qRole = query(
         collection(db, "medical-staff"),
@@ -57,18 +57,21 @@ export const useDoctorDashboard = () => {
       if (!roleSnap.empty) {
         const targetDoc = roleSnap.docs[0];
         foundDocId = targetDoc.id;
-        docData = targetDoc.data();
+        docData = targetDoc.data() as Record<string, unknown>;
       } else {
         const directRef = doc(db, "medical-staff", user.uid);
         const directSnap = await getDoc(directRef);
         if (directSnap.exists()) {
           foundDocId = user.uid;
-          docData = directSnap.data();
+          docData = directSnap.data() as Record<string, unknown>;
         }
       }
 
       const doctorName =
-        docData?.name || docData?.fullName || user.displayName || "";
+        (typeof docData?.name === "string" ? docData.name : "") ||
+        (typeof docData?.fullName === "string" ? docData.fullName : "") ||
+        user.displayName ||
+        "";
 
       const usersSnap = await getDocs(collection(db, "users"));
       const doctorAppointments: AppointmentItem[] = [];
@@ -76,17 +79,38 @@ export const useDoctorDashboard = () => {
       usersSnap.forEach((userDoc) => {
         const userData = userDoc.data();
         if (userData.appointments && Array.isArray(userData.appointments)) {
-          userData.appointments.forEach((app: any) => {
+          userData.appointments.forEach((app: unknown) => {
+            if (typeof app !== "object" || app === null) return;
+            const appointment = app as Record<string, unknown>;
             const isForThisDoctor =
-              !app.doctorName ||
-              app.doctorName.trim().toLowerCase() ===
+              typeof appointment.doctorName !== "string" ||
+              appointment.doctorName.trim().toLowerCase() ===
                 doctorName.trim().toLowerCase();
 
             if (isForThisDoctor) {
               doctorAppointments.push({
-                ...app,
+                id: typeof appointment.id === "string" ? appointment.id : "",
+                speciality:
+                  typeof appointment.speciality === "string"
+                    ? appointment.speciality
+                    : "",
+                startTime:
+                  typeof appointment.startTime === "string"
+                    ? appointment.startTime
+                    : "",
+                status:
+                  typeof appointment.status === "string"
+                    ? appointment.status
+                    : "Pending",
+                doctorName:
+                  typeof appointment.doctorName === "string"
+                    ? appointment.doctorName
+                    : undefined,
                 patientId: userDoc.id,
-                patientName: userData.fullName || "Patient",
+                patientName:
+                  typeof userData.fullName === "string"
+                    ? userData.fullName
+                    : "Patient",
               });
             }
           });
@@ -98,10 +122,10 @@ export const useDoctorDashboard = () => {
         setData({
           id: foundDocId,
           name: doctorName || "Doctor",
-          avatarUrl: docData.avatarUrl || "",
-          hospital: docData.hospital || "Not specified",
-          location: docData.location || "Not specified",
-          availableHours: docData.availableHours || "Not specified",
+          avatarUrl: typeof docData.avatarUrl === "string" ? docData.avatarUrl : "",
+          hospital: typeof docData.hospital === "string" ? docData.hospital : "Not specified",
+          location: typeof docData.location === "string" ? docData.location : "Not specified",
+          availableHours: typeof docData.availableHours === "string" ? docData.availableHours : "Not specified",
           appointments: doctorAppointments,
         });
       } else {
@@ -128,8 +152,13 @@ export const useDoctorDashboard = () => {
         const patientData = patientSnap.data();
         const appointments = patientData.appointments || [];
 
-        const updatedAppointments = appointments.map((app: any) =>
-          app.id === appointmentId ? { ...app, status: newStatus } : app,
+        const updatedAppointments = appointments.map((app: unknown) => {
+          if (typeof app !== "object" || app === null) return app;
+          const appointment = app as Record<string, unknown>;
+          return appointment.id === appointmentId
+            ? { ...appointment, status: newStatus }
+            : appointment;
+        },
         );
 
         await updateDoc(patientRef, { appointments: updatedAppointments });
@@ -139,6 +168,12 @@ export const useDoctorDashboard = () => {
     } catch (err) {
       console.error("Failed to update appointment status:", err);
     }
+  };
+
+  const updateAvatar = async (avatarUrl: string) => {
+    if (!docId) return;
+    await updateDoc(doc(db, "medical-staff", docId), { avatarUrl });
+    await fetchDoctorData();
   };
 
   useEffect(() => {
@@ -156,5 +191,6 @@ export const useDoctorDashboard = () => {
     error,
     refreshData: fetchDoctorData,
     updateAppointmentStatus,
+    updateAvatar,
   };
 };

@@ -1,3 +1,4 @@
+import { useMutation } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { db } from "@/app/providers/firebase";
 import { doc, setDoc, arrayUnion } from "firebase/firestore";
@@ -16,30 +17,32 @@ export const useAppointments = (
     }
   }, [initialAppointments]);
 
-  const addAppointmentToDb = async (newAppointment: AppointmentItem) => {
-    if (!userId) return;
-
-    try {
-      const userDocRef = doc(db, "users", userId);
+  const addAppointmentMutation = useMutation({
+    mutationFn: async (newAppointment: AppointmentItem) => {
+      if (!userId) {
+        throw new Error("A user ID is required to save an appointment.");
+      }
 
       await setDoc(
-        userDocRef,
-        {
-          appointments: arrayUnion(newAppointment),
-        },
+        doc(db, "users", userId),
+        { appointments: arrayUnion(newAppointment) },
         { merge: true },
       );
-
+      return newAppointment;
+    },
+    onSuccess: (newAppointment) => {
       setAppointments((prev) => [newAppointment, ...prev]);
-    } catch (error) {
+    },
+    onError: (error) => {
       console.error("Error saving appointment to Firestore:", error);
       alert("Не удалось сохранить запись в базу данных.");
-    }
-  };
+    },
+  });
 
   return {
     appointments,
     setAppointments,
-    addAppointmentToDb,
+    addAppointmentToDb: addAppointmentMutation.mutateAsync,
+    isSaving: addAppointmentMutation.isPending,
   };
 };

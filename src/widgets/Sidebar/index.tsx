@@ -22,7 +22,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const isStaff = currentPath === "/medical-staff";
   const isFeedback = currentPath === "/feedback";
 
-  const handleProtectedClick = (e: React.MouseEvent, _to: string) => {
+  const handleProtectedClick = (e: React.MouseEvent) => {
     if (!user) {
       e.preventDefault();
       onClose();
@@ -78,7 +78,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             {user && isDoctor && (
               <Link
                 to="/patients"
-                onClick={(e) => handleProtectedClick(e, "/patients")}
+                onClick={(e) => handleProtectedClick(e)}
                 className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${
                   isPatients
                     ? "bg-emerald-50 text-emerald-600"
@@ -94,7 +94,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
             <Link
               to="/profile"
-              onClick={(e) => handleProtectedClick(e, "/profile")}
+              onClick={(e) => handleProtectedClick(e)}
               className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${
                 isProfile
                   ? "bg-emerald-50 text-emerald-600"
@@ -111,7 +111,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             {!isDoctor && (
               <Link
                 to="/medical-staff"
-                onClick={(e) => handleProtectedClick(e, "/medical-staff")}
+                onClick={(e) => handleProtectedClick(e)}
                 className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${
                   isStaff
                     ? "bg-emerald-50 text-emerald-600"
@@ -131,7 +131,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             {!isDoctor && (
               <Link
                 to="/feedback"
-                onClick={(e) => handleProtectedClick(e, "/feedback")}
+                onClick={(e) => handleProtectedClick(e)}
                 className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${
                   isFeedback
                     ? "bg-emerald-50 text-emerald-600"

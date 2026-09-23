@@ -11,32 +11,53 @@ export const ChatTab: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isConnected, setIsConnected] = useState(false);
+  const [connectionError, setConnectionError] = useState<string | null>(null);
   const socketRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    const ws = new WebSocket("wss://ws.ifelse.io");
-    socketRef.current = ws;
+    let reconnectTimer: ReturnType<typeof setTimeout> | undefined;
+    let disposed = false;
 
-    ws.onopen = () => setIsConnected(true);
-    ws.onclose = () => setIsConnected(false);
+    const connect = () => {
+      if (disposed) return;
+      const ws = new WebSocket("wss://ws.ifelse.io");
+      socketRef.current = ws;
 
-    ws.onmessage = (event) => {
-      const incomingText =
-        typeof event.data === "string" ? event.data : "New message";
-      const serverMessage: Message = {
-        id: Date.now().toString() + "-server",
-        text: incomingText,
-        sender: "server",
-        timestamp: new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
+      ws.onopen = () => {
+        setIsConnected(true);
+        setConnectionError(null);
       };
-      setMessages((prev) => [...prev, serverMessage]);
+      ws.onerror = () => {
+        setConnectionError("Unable to connect to the chat server.");
+      };
+      ws.onclose = () => {
+        setIsConnected(false);
+        if (!disposed) {
+          reconnectTimer = setTimeout(connect, 3000);
+        }
+      };
+      ws.onmessage = (event) => {
+        const incomingText =
+          typeof event.data === "string" ? event.data : "New message";
+        const serverMessage: Message = {
+          id: `${Date.now()}-server`,
+          text: incomingText,
+          sender: "server",
+          timestamp: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        };
+        setMessages((prev) => [...prev, serverMessage]);
+      };
     };
 
+    connect();
     return () => {
-      ws.close();
+      disposed = true;
+      if (reconnectTimer) clearTimeout(reconnectTimer);
+      socketRef.current?.close();
+      socketRef.current = null;
     };
   }, []);
 
@@ -74,6 +95,11 @@ export const ChatTab: React.FC = () => {
           <p className="text-xs text-gray-500">
             Connected to wss://ws.ifelse.io
           </p>
+          {connectionError && (
+            <p className="text-xs text-red-600" role="alert">
+              {connectionError} Retrying...
+            </p>
+          )}
         </div>
         <div className="flex items-center gap-2">
           <span

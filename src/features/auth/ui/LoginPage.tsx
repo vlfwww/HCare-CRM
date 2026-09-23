@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import {
   signInWithEmailAndPassword,
-  GoogleAuthProvider,
-  signInWithPopup,
 } from "firebase/auth";
 import { auth } from "@/app/providers/firebase";
+import { signInWithGoogle } from "../model/useGoogleAuth";
+import { getAuthErrorMessage } from "../model/authError";
+import { ensurePatientProfile } from "@/shared/lib/ensurePatientProfile";
 import { useNavigate, Link } from "@tanstack/react-router";
 import { Activity, Loader2, AlertCircle } from "lucide-react";
 
@@ -22,10 +23,11 @@ export const LoginPage: React.FC = () => {
     setLoading(true);
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      await ensurePatientProfile(result.user);
       navigate({ to: "/" });
-    } catch (err: any) {
-      setError("Invalid email or password");
+    } catch (error: unknown) {
+      setError(getAuthErrorMessage(error, "Неверный email или пароль."));
     } finally {
       setLoading(false);
     }
@@ -34,13 +36,11 @@ export const LoginPage: React.FC = () => {
   const handleGoogleLogin = async () => {
     setError("");
     setGoogleLoading(true);
-    const provider = new GoogleAuthProvider();
-
     try {
-      await signInWithPopup(auth, provider);
+      await signInWithGoogle();
       navigate({ to: "/" });
-    } catch (err: any) {
-      setError(err.message || "Google sign-in failed");
+    } catch (error: unknown) {
+      setError(getAuthErrorMessage(error, "Не удалось войти через Google."));
     } finally {
       setGoogleLoading(false);
     }

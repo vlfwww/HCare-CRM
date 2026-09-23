@@ -116,7 +116,7 @@ export const PersonalInfo: React.FC<PersonalInfoProps> = ({
           ) : (
             <p className="text-sm font-semibold text-gray-800">
               {initialData?.gender || (
-                <span className="text-red-500 text-xs">Missing data</span>
+                <span className="text-red-500 text-xs">MISSING DATA</span>
               )}
             </p>
           )}
@@ -153,14 +153,22 @@ export const PersonalInfo: React.FC<PersonalInfoProps> = ({
               {initialData?.birthDate ? (
                 `${initialData.birthDate} (${initialData.age || 0})`
               ) : (
-                <span className="text-red-500 text-xs">Missing data</span>
+                <span className="text-red-500 text-xs">MISSING DATA</span>
               )}
             </p>
           )}
         </div>
 
         <div>
-          <p className="text-xs text-gray-400 font-medium">Nationality</p>
+          <p className="text-xs text-gray-400 font-medium flex items-center justify-between">
+            <span>Nationality</span>
+            {canEdit && !isEditing && !initialData?.nationality && (
+              <MissingFieldBadge
+                fieldName="Nationality"
+                onOpenModal={() => setIsEditing(true)}
+              />
+            )}
+          </p>
           {isEditing ? (
             <input
               type="text"
@@ -171,13 +179,21 @@ export const PersonalInfo: React.FC<PersonalInfoProps> = ({
             />
           ) : (
             <p className="text-sm font-semibold text-gray-800">
-              {initialData?.nationality || "-"}
+              {initialData?.nationality || "MISSING DATA"}
             </p>
           )}
         </div>
 
         <div>
-          <p className="text-xs text-gray-400 font-medium">Marital status</p>
+          <p className="text-xs text-gray-400 font-medium flex items-center justify-between">
+            <span>Marital status</span>
+            {canEdit && !isEditing && !initialData?.maritalStatus && (
+              <MissingFieldBadge
+                fieldName="Marital status"
+                onOpenModal={() => setIsEditing(true)}
+              />
+            )}
+          </p>
           {isEditing ? (
             <select
               value={maritalStatus}
@@ -194,13 +210,21 @@ export const PersonalInfo: React.FC<PersonalInfoProps> = ({
             </select>
           ) : (
             <p className="text-sm font-semibold text-gray-800">
-              {initialData?.maritalStatus || "-"}
+              {initialData?.maritalStatus || "MISSING DATA"}
             </p>
           )}
         </div>
 
         <div>
-          <p className="text-xs text-gray-400 font-medium">Emergency contact</p>
+          <p className="text-xs text-gray-400 font-medium flex items-center justify-between">
+            <span>Emergency contact</span>
+            {canEdit && !isEditing && !initialData?.emergencyContact && (
+              <MissingFieldBadge
+                fieldName="Emergency contact"
+                onOpenModal={() => setIsEditing(true)}
+              />
+            )}
+          </p>
           {isEditing ? (
             <input
               type="text"
@@ -211,7 +235,7 @@ export const PersonalInfo: React.FC<PersonalInfoProps> = ({
             />
           ) : (
             <p className="text-sm font-semibold text-gray-800">
-              {initialData?.emergencyContact || "-"}
+              {initialData?.emergencyContact || "MISSING DATA"}
             </p>
           )}
         </div>

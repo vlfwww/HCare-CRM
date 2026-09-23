@@ -78,13 +78,16 @@ export const ContactInfo: React.FC<ContactInfoProps> = ({
           value={fields.fullName}
           isEditing={isEditing}
           error={errors.fullName}
-          isEmpty={canEdit && !fields.fullName.trim()}
+          isEmpty={
+            canEdit &&
+            (!fields.fullName.trim() || fields.fullName === "New Patient")
+          }
           onChange={(val) => {
             setters.setFullName(val);
             if (errors.fullName) setErrors({ ...errors, fullName: undefined });
           }}
           onOpenModal={() => canEdit && setIsEditing(true)}
-          renderDisplayValue={() => initialFullName || "Not specified"}
+          renderDisplayValue={() => fields.fullName.trim() || "MISSING DATA"}
         />
 
         <ContactFieldItem

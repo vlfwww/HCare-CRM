@@ -44,13 +44,13 @@ export const useContactEdit = (initialFullName: string, data: ContactData) => {
 
     if (!phone.trim()) {
       newErrors.phone = "Phone is required";
-    } else if (!/^[\d\s\-\+\(\)]+$/.test(phone) || !/\d/.test(phone)) {
+    } else if (!/^[\d\s\-+()]+$/.test(phone) || !/\d/.test(phone)) {
       newErrors.phone = "Invalid phone format";
     }
 
     if (
       homePhone.trim() &&
-      (!/^[\d\s\-\+\(\)]+$/.test(homePhone) || !/\d/.test(homePhone))
+      (!/^[\d\s\-+()]+$/.test(homePhone) || !/\d/.test(homePhone))
     ) {
       newErrors.homePhone = "Invalid phone format";
     }

@@ -99,19 +99,6 @@ export const EditDoctorProfileModal: React.FC<EditDoctorProfileModalProps> = ({
 
           <div>
             <label className="block text-xs font-semibold text-gray-600 uppercase mb-1">
-              Avatar URL
-            </label>
-            <input
-              type="text"
-              name="avatarUrl"
-              value={formData.avatarUrl || ""}
-              onChange={handleChange}
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-emerald-500"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-gray-600 uppercase mb-1">
               Hospital
             </label>
             <input
