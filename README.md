@@ -68,7 +68,9 @@ Before the first deployment:
 
 The application URL is
 `https://vlfwww.github.io/HCare-CRM/`. The Vite base path is enabled only in
-GitHub Actions, so local development continues to use `/`.
+GitHub Actions, so local development continues to use `/`. Client-side
+navigation uses hash history, so refreshing a route such as
+`/HCare-CRM/#/medical-staff` does not request a non-existent server path.
 
 Firestore rules are stored in [`firestore.rules`](./firestore.rules) and must
 be deployed to the same Firebase project separately, for example with the

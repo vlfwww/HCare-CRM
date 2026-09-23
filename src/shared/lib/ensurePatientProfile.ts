@@ -38,8 +38,29 @@ const emptyPatientProfile = (user: User) => ({
 });
 
 export const ensurePatientProfile = async (user: User): Promise<void> => {
+  try {
+    const staffSnapshot = await getDoc(doc(db, "medical-staff", user.uid));
+    const staffRole = staffSnapshot.data()?.role;
+
+    if (
+      staffSnapshot.exists() &&
+      typeof staffRole === "string" &&
+      staffRole.trim().toLowerCase() === "doctor"
+    ) {
+      return;
+    }
+  } catch (error) {
+    console.error("Error checking medical staff profile:", error);
+  }
+
   const profileRef = doc(db, "users", user.uid);
   const snapshot = await getDoc(profileRef);
+  if (
+    snapshot.exists() &&
+    snapshot.data()?.role?.toString().trim().toLowerCase() === "doctor"
+  ) {
+    return;
+  }
   const defaults = emptyPatientProfile(user);
 
   if (!snapshot.exists()) {

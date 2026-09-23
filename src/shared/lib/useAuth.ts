@@ -14,13 +14,27 @@ export function useAuth() {
 
       if (firebaseUser) {
         try {
-          const doctorRef = doc(db, "medical-staff", firebaseUser.uid);
-          const doctorSnap = await getDoc(doctorRef);
-          setIsDoctor(
-            doctorSnap.exists() &&
+          let isStaffDoctor = false;
+          try {
+            const doctorSnap = await getDoc(
+              doc(db, "medical-staff", firebaseUser.uid),
+            );
+            isStaffDoctor =
+              doctorSnap.exists() &&
               doctorSnap.data()?.role?.toString().trim().toLowerCase() ===
-                "doctor",
-          );
+                "doctor";
+          } catch (error) {
+            console.error("Error checking medical staff role:", error);
+          }
+
+          if (!isStaffDoctor) {
+            const userSnap = await getDoc(doc(db, "users", firebaseUser.uid));
+            isStaffDoctor =
+              userSnap.exists() &&
+              userSnap.data()?.role?.toString().trim().toLowerCase() ===
+                "doctor";
+          }
+          setIsDoctor(isStaffDoctor);
         } catch (error) {
           console.error("Error checking user role:", error);
           setIsDoctor(false);

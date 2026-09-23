@@ -11,6 +11,7 @@ import {
   createRootRoute,
   createRoute,
   createRouter,
+  createHashHistory,
   useNavigate,
 } from "@tanstack/react-router";
 import { ProtectedRoute } from "./ProtectedRoute";
@@ -108,6 +109,7 @@ const routeTree = rootRoute.addChildren([
 export const router = createRouter({
   routeTree,
   basepath: import.meta.env.BASE_URL.replace(/\/$/, "") || "/",
+  history: createHashHistory(),
 });
 
 declare module "@tanstack/react-router" {
