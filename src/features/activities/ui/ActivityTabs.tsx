@@ -18,10 +18,14 @@ export const ActivityTabs: React.FC<ActivityTabsProps> = ({
         <button
           key={tab}
           onClick={() => onChangeTab(tab)}
+          type="button"
+          aria-label={`Show ${tab}`}
+          aria-selected={activeTab === tab}
+          role="tab"
           className={`pb-3 font-medium relative capitalize ${
             activeTab === tab
               ? "text-emerald-600 border-b-2 border-emerald-500 -mb-[1px]"
-              : "text-gray-400 hover:text-gray-600"
+              : "text-gray-600 hover:text-gray-900"
           }`}
         >
           {tab}

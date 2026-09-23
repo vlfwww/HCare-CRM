@@ -73,7 +73,7 @@ export const PersonalInfo: React.FC<PersonalInfoProps> = ({
                 onClick={() => setIsEditing(true)}
                 className="cursor-pointer"
               >
-                <ActionButton icon={Edit2} />
+                <ActionButton icon={Edit2} ariaLabel="Edit personal information" />
               </div>
             )}
           </div>
@@ -82,7 +82,7 @@ export const PersonalInfo: React.FC<PersonalInfoProps> = ({
 
       <div className="space-y-4">
         <div>
-          <p className="text-xs text-gray-400 font-medium flex items-center justify-between">
+          <p className="text-xs text-gray-600 font-medium flex items-center justify-between">
             <span>Gender</span>
             {canEdit && !isEditing && !initialData?.gender && (
               <MissingFieldBadge
@@ -123,7 +123,7 @@ export const PersonalInfo: React.FC<PersonalInfoProps> = ({
         </div>
 
         <div>
-          <p className="text-xs text-gray-400 font-medium flex items-center justify-between">
+          <p className="text-xs text-gray-600 font-medium flex items-center justify-between">
             <span>Birth Date</span>
             {canEdit && !isEditing && !initialData?.birthDate && (
               <MissingFieldBadge
@@ -160,7 +160,7 @@ export const PersonalInfo: React.FC<PersonalInfoProps> = ({
         </div>
 
         <div>
-          <p className="text-xs text-gray-400 font-medium flex items-center justify-between">
+          <p className="text-xs text-gray-600 font-medium flex items-center justify-between">
             <span>Nationality</span>
             {canEdit && !isEditing && !initialData?.nationality && (
               <MissingFieldBadge
@@ -185,7 +185,7 @@ export const PersonalInfo: React.FC<PersonalInfoProps> = ({
         </div>
 
         <div>
-          <p className="text-xs text-gray-400 font-medium flex items-center justify-between">
+          <p className="text-xs text-gray-600 font-medium flex items-center justify-between">
             <span>Marital status</span>
             {canEdit && !isEditing && !initialData?.maritalStatus && (
               <MissingFieldBadge
@@ -216,7 +216,7 @@ export const PersonalInfo: React.FC<PersonalInfoProps> = ({
         </div>
 
         <div>
-          <p className="text-xs text-gray-400 font-medium flex items-center justify-between">
+          <p className="text-xs text-gray-600 font-medium flex items-center justify-between">
             <span>Emergency contact</span>
             {canEdit && !isEditing && !initialData?.emergencyContact && (
               <MissingFieldBadge

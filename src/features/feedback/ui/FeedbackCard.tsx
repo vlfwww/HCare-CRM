@@ -20,14 +20,14 @@ export const FeedbackCard: React.FC<FeedbackCardProps> = ({ feedbacks }) => {
           className="cursor-pointer"
           title="Leave feedback"
         >
-          <ActionButton icon={Plus} />
+          <ActionButton icon={Plus} ariaLabel="Add feedback" />
         </div>
       </div>
 
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
           <thead>
-            <tr className="bg-gray-50/70 text-gray-400 border-y border-gray-100">
+            <tr className="bg-gray-50/70 text-gray-600 border-y border-gray-100">
               <th className="py-3 px-6 font-medium">Case Title</th>
               <th className="py-3 px-4 font-medium">Date</th>
               <th className="py-3 px-4 font-medium">Status</th>
@@ -36,7 +36,7 @@ export const FeedbackCard: React.FC<FeedbackCardProps> = ({ feedbacks }) => {
           <tbody className="divide-y divide-gray-100">
             {feedbacks.length === 0 ? (
               <tr>
-                <td colSpan={3} className="py-6 text-center text-gray-400">
+                <td colSpan={3} className="py-6 text-center text-gray-600">
                   No feedback given yet.
                 </td>
               </tr>

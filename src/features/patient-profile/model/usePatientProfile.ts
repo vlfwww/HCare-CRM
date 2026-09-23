@@ -46,7 +46,10 @@ function calculateAge(birthDateString?: string): number {
   return age;
 }
 
-export const usePatientProfile = (targetUserId?: string) => {
+export const usePatientProfile = (
+  targetUserId?: string,
+  activeTab: "summary" | "care-plan" | "lab-results" | "pghd" | "prescriptions" | "chat" = "summary",
+) => {
   const queryClient = useQueryClient();
   const { user, isDoctor, loading: authLoading } = useAuth();
   const userId = targetUserId || user?.uid || "";
@@ -65,7 +68,7 @@ export const usePatientProfile = (targetUserId?: string) => {
   }, [data?.carePlans]);
 
   useEffect(() => {
-    if (!userId) return;
+    if (!userId || activeTab !== "pghd") return;
 
     const q = query(collection(db, `users/${userId}/pghd`));
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -77,10 +80,10 @@ export const usePatientProfile = (targetUserId?: string) => {
     });
 
     return () => unsubscribe();
-  }, [userId]);
+  }, [userId, activeTab]);
 
   useEffect(() => {
-    if (!userId) return;
+    if (!userId || activeTab !== "prescriptions") return;
 
     const q = query(
       collection(db, `users/${userId}/prescriptions`),
@@ -101,7 +104,7 @@ export const usePatientProfile = (targetUserId?: string) => {
     );
 
     return () => unsubscribe();
-  }, [userId]);
+  }, [userId, activeTab]);
 
   const initialAppointments: AppointmentItem[] = (data?.appointments ||
     []) as unknown as AppointmentItem[];
@@ -111,8 +114,11 @@ export const usePatientProfile = (targetUserId?: string) => {
     initialAppointments,
   );
 
-  const { surveys, availableSurveys, addSurveyToDb } = useSurveys(userId);
-  const { feedbacks } = useFeedback(userId);
+  const { surveys, availableSurveys, addSurveyToDb } = useSurveys(
+    userId,
+    activeTab === "summary" || activeTab === "lab-results",
+  );
+  const { feedbacks } = useFeedback(userId, activeTab === "summary");
 
   const addCarePlanToDb = async (carePlanData: {
     title: string;

@@ -29,7 +29,7 @@ export const ContactFieldItem: React.FC<ContactFieldItemProps> = ({
 }) => {
   return (
     <div>
-      <p className="text-xs text-gray-400 font-medium flex items-center justify-between">
+      <p className="text-xs text-gray-600 font-medium flex items-center justify-between">
         <span>{label}</span>
         {!isEditing && isEmpty && (
           <MissingFieldBadge fieldName={label} onOpenModal={onOpenModal} />

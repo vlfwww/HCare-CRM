@@ -45,6 +45,7 @@ export const PatientHeader: React.FC<PatientHeaderProps> = ({
         onClick={() => canEdit && inputRef.current?.click()}
         disabled={!canEdit}
         title={canEdit ? "Change profile photo" : undefined}
+        aria-label={canEdit ? "Change profile photo" : "Profile photo"}
       >
         {avatarUrl ? (
           <img src={avatarUrl} alt={fullName || "Profile"} className="w-full h-full object-cover" />
@@ -70,7 +71,7 @@ export const PatientHeader: React.FC<PatientHeaderProps> = ({
         <h2 className="text-xl font-bold text-gray-800">
           {fullName || "MISSING DATA"}
         </h2>
-        <p className="text-sm text-gray-400">{role}</p>
+        <p className="text-sm text-gray-600">{role}</p>
       </div>
     </div>
   );

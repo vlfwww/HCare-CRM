@@ -30,7 +30,7 @@ export const SurveysCard: React.FC<SurveysCardProps> = ({
             onClick={() => setIsModalOpen(true)}
             className="cursor-pointer focus:outline-none bg-transparent border-none p-0"
           >
-            <ActionButton icon={Plus} />
+            <ActionButton icon={Plus} ariaLabel="Add survey" />
           </div>
         )}
       </div>
@@ -38,7 +38,7 @@ export const SurveysCard: React.FC<SurveysCardProps> = ({
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
           <thead>
-            <tr className="bg-gray-50/70 text-gray-400 border-y border-gray-100">
+            <tr className="bg-gray-50/70 text-gray-600 border-y border-gray-100">
               <th className="py-3 px-6 font-medium">Title</th>
               <th className="py-3 px-4 font-medium">Completed on</th>
             </tr>
@@ -46,7 +46,7 @@ export const SurveysCard: React.FC<SurveysCardProps> = ({
           <tbody className="divide-y divide-gray-100">
             {surveys.length === 0 ? (
               <tr>
-                <td colSpan={2} className="py-6 text-center text-gray-400">
+                <td colSpan={2} className="py-6 text-center text-gray-600">
                   No surveys found
                 </td>
               </tr>

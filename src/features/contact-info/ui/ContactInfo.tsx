@@ -65,7 +65,7 @@ export const ContactInfo: React.FC<ContactInfoProps> = ({
                 onClick={() => setIsEditing(true)}
                 className="cursor-pointer"
               >
-                <ActionButton icon={Edit2} />
+                <ActionButton icon={Edit2} ariaLabel="Edit contact information" />
               </div>
             )}
           </div>

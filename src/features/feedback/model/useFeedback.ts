@@ -15,7 +15,7 @@ export const calculateStars = (
   return "★".repeat(clamped) + "☆".repeat(5 - clamped);
 };
 
-export const useFeedback = (userId: string) => {
+export const useFeedback = (userId: string, enabled = true) => {
   const [completedAppointments, setCompletedAppointments] = useState<
     AppointmentItem[]
   >([]);
@@ -30,7 +30,7 @@ export const useFeedback = (userId: string) => {
   });
 
   useEffect(() => {
-    if (!userId) {
+    if (!userId || !enabled) {
       setIsLoading(false);
       return;
     }
@@ -77,7 +77,7 @@ export const useFeedback = (userId: string) => {
     };
 
     void fetchFeedbackData();
-  }, [userId]);
+  }, [userId, enabled]);
 
   const handleSaveFeedback = async () => {
     setErrorMessage(null);

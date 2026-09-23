@@ -59,7 +59,7 @@ export const InsuranceInfo: React.FC<InsuranceInfoProps> = ({
                 onClick={() => setIsEditing(true)}
                 className="cursor-pointer"
               >
-                <ActionButton icon={Edit2} />
+                <ActionButton icon={Edit2} ariaLabel="Edit insurance information" />
               </div>
             )}
           </>
@@ -68,7 +68,7 @@ export const InsuranceInfo: React.FC<InsuranceInfoProps> = ({
 
       <div className="space-y-4">
         <div>
-          <p className="text-xs text-gray-400 font-medium flex items-center justify-between">
+          <p className="text-xs text-gray-600 font-medium flex items-center justify-between">
             <span>Member ID</span>
             {canEdit && !isEditing && !initialMemberId && (
               <MissingFieldBadge
@@ -104,7 +104,7 @@ export const InsuranceInfo: React.FC<InsuranceInfoProps> = ({
         </div>
 
         <div>
-          <p className="text-xs text-gray-400 font-medium flex items-center justify-between">
+          <p className="text-xs text-gray-600 font-medium flex items-center justify-between">
             <span>Insurance Provider</span>
             {canEdit && !isEditing && !initialProvider && (
               <MissingFieldBadge

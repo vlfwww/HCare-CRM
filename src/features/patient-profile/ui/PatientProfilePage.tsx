@@ -18,6 +18,7 @@ interface PatientProfilePageProps {
 export const PatientProfilePage: React.FC<PatientProfilePageProps> = ({
   targetUserId,
 }) => {
+  const { activeTab, setActiveTab } = usePatientTabs();
   const {
     userId,
     isLoading,
@@ -38,9 +39,7 @@ export const PatientProfilePage: React.FC<PatientProfilePageProps> = ({
     addCarePlanToDb,
     updateSurveyResultInDb,
     addPrescriptionToDb,
-  } = usePatientProfile(targetUserId);
-
-  const { activeTab, setActiveTab } = usePatientTabs();
+  } = usePatientProfile(targetUserId, activeTab);
 
   if (isLoading) {
     return (
@@ -86,6 +85,8 @@ export const PatientProfilePage: React.FC<PatientProfilePageProps> = ({
           {canEditProfile && (
             <button
               onClick={handleOpenModal}
+              type="button"
+              aria-label={isProfileComplete ? "Edit profile" : "Complete profile"}
               className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors shadow-sm cursor-pointer"
             >
               {isProfileComplete ? "Edit Profile" : "Complete Profile!"}
@@ -100,10 +101,14 @@ export const PatientProfilePage: React.FC<PatientProfilePageProps> = ({
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as PatientTabType)}
+                type="button"
+                aria-label={`Open ${tab.label}`}
+                aria-selected={isActive}
+                role="tab"
                 className={`pb-3 transition-colors cursor-pointer font-medium text-sm whitespace-nowrap ${
                   isActive
                     ? "text-emerald-600 font-semibold border-b-2 border-emerald-500 -mb-[5px]"
-                    : "text-gray-400 hover:text-gray-700"
+                    : "text-gray-600 hover:text-gray-900"
                 }`}
               >
                 {tab.label}

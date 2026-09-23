@@ -33,7 +33,7 @@ export const AppointmentsCard: React.FC<AppointmentsCardProps> = ({
             onClick={() => setIsModalOpen(true)}
             className="cursor-pointer focus:outline-none bg-transparent border-none p-0"
           >
-            <ActionButton icon={Plus} />
+            <ActionButton icon={Plus} ariaLabel="Add appointment" />
           </div>
         )}
       </div>
@@ -41,14 +41,14 @@ export const AppointmentsCard: React.FC<AppointmentsCardProps> = ({
       <div className="overflow-x-auto pb-4">
         {!appointments || appointments.length === 0 ? (
           <div className="text-center py-8 px-4">
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-gray-600">
               No appointments found for this patient
             </p>
           </div>
         ) : (
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="bg-gray-50/70 text-gray-400 border-y border-gray-100">
+              <tr className="bg-gray-50/70 text-gray-600 border-y border-gray-100">
                 <th className="py-3 px-4 sm:px-6 font-medium">Start Time</th>
                 <th className="py-3 px-4 font-medium">Speciality & Doctor</th>
                 <th className="py-3 px-4 font-medium">Status</th>
@@ -73,7 +73,7 @@ export const AppointmentsCard: React.FC<AppointmentsCardProps> = ({
                     <td className="py-4 px-4 text-gray-600 font-medium">
                       <div>{spec}</div>
                       {app.doctorName && (
-                        <div className="text-gray-400 text-[10px] mt-0.5">
+                        <div className="text-gray-600 text-[10px] mt-0.5">
                           {app.doctorName}
                         </div>
                       )}

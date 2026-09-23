@@ -12,7 +12,7 @@ const DEFAULT_AVAILABLE_SURVEYS = [
   "General Medical Checkup",
 ];
 
-export const useSurveys = (userId: string) => {
+export const useSurveys = (userId: string, enabled = true) => {
   const [surveys, setSurveys] = useState<SurveyItem[]>([]);
   const [availableSurveys, setAvailableSurveys] = useState<string[]>(
     DEFAULT_AVAILABLE_SURVEYS,
@@ -20,7 +20,7 @@ export const useSurveys = (userId: string) => {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    if (!userId) return;
+    if (!userId || !enabled) return;
 
     const q = query(collection(db, `users/${userId}/surveys`));
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -45,7 +45,7 @@ export const useSurveys = (userId: string) => {
       unsubscribe();
       unsubscribeList();
     };
-  }, [userId]);
+  }, [userId, enabled]);
 
   const addSurveyToDb = async (newSurveyData: Omit<SurveyItem, "id">) => {
     if (!userId) return;

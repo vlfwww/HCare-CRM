@@ -44,7 +44,7 @@ export const Activities: React.FC<ActivitiesProps> = ({ userId }) => {
           onClick={() => setIsModalOpen(true)}
           className="cursor-pointer focus:outline-none bg-transparent border-none p-0"
         >
-          <ActionButton icon={Plus} />
+          <ActionButton icon={Plus} ariaLabel="Add activity" />
         </div>
       </div>
 
@@ -60,6 +60,7 @@ export const Activities: React.FC<ActivitiesProps> = ({ userId }) => {
           <button
             type="button"
             className="absolute right-0 top-1 text-gray-400 hover:text-gray-600"
+            aria-label="Search activities"
           >
             <Search className="w-4 h-4" />
           </button>
@@ -103,6 +104,7 @@ export const Activities: React.FC<ActivitiesProps> = ({ userId }) => {
                 type="button"
                 onClick={() => setIsModalOpen(false)}
                 className="text-gray-400 hover:text-gray-600 cursor-pointer"
+                aria-label="Close activity form"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -133,6 +135,7 @@ export const Activities: React.FC<ActivitiesProps> = ({ userId }) => {
                 <button
                   type="button"
                   className="absolute right-0 top-1 text-gray-400 hover:text-gray-600"
+                  aria-label="Add link"
                 >
                   <Link2 className="w-4 h-4" />
                 </button>

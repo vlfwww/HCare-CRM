@@ -24,7 +24,7 @@ export const ContactPreferencesCard: React.FC = () => {
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
           <thead>
-            <tr className="bg-gray-50/70 text-gray-400 border-y border-gray-100">
+            <tr className="bg-gray-50/70 text-gray-600 border-y border-gray-100">
               <th className="py-3 px-6 font-medium">Contact Method</th>
             </tr>
           </thead>
@@ -60,6 +60,7 @@ export const ContactPreferencesCard: React.FC = () => {
                             type="button"
                             onClick={() => updatePreference(key, !isAllowed)}
                             className="w-11 h-6 flex items-center rounded-full p-1 bg-gray-200 cursor-pointer transition-colors duration-200 ease-in-out"
+                            aria-label={`${isAllowed ? "Disable" : "Enable"} ${label} contact preference`}
                           >
                             <div
                               className={`w-4 h-4 rounded-full shadow-md transform transition-transform duration-200 ease-in-out ${
