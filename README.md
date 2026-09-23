@@ -73,8 +73,12 @@ navigation uses hash history, so refreshing a route such as
 `/HCare-CRM/#/medical-staff` does not request a non-existent server path.
 
 Firestore rules are stored in [`firestore.rules`](./firestore.rules) and must
-be deployed to the same Firebase project separately, for example with the
-Firebase CLI:
+be deployed to the same Firebase project. The Pages workflow deploys them
+automatically when the `FIREBASE_SERVICE_ACCOUNT` GitHub secret is configured.
+The service account must have the **Cloud Datastore Owner** or equivalent
+Firestore rules deployment permission.
+
+For a one-time manual deployment, use the Firebase CLI:
 
 ```bash
 firebase use hcare-8158

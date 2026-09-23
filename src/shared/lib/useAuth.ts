@@ -7,10 +7,12 @@ export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [isDoctor, setIsDoctor] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [roleError, setRoleError] = useState<Error | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
+      setRoleError(null);
 
       if (firebaseUser) {
         try {
@@ -26,6 +28,11 @@ export function useAuth() {
         } catch (error) {
           console.error("Error checking user role:", error);
           setIsDoctor(false);
+          setRoleError(
+            error instanceof Error
+              ? error
+              : new Error("Unable to check the user's role."),
+          );
         }
       } else {
         setIsDoctor(false);
@@ -37,5 +44,5 @@ export function useAuth() {
     return unsubscribe;
   }, []);
 
-  return { user, isDoctor, loading };
+  return { user, isDoctor, loading, roleError };
 }

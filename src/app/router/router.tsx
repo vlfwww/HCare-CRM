@@ -55,7 +55,18 @@ export const profileRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/profile",
   component: function ProfileRoute() {
-    const { isDoctor } = useAuth();
+    const { isDoctor, loading, roleError } = useAuth();
+    if (loading) {
+      return <div className="p-8 text-gray-500">Checking account role...</div>;
+    }
+    if (roleError) {
+      return (
+        <div className="m-8 rounded-xl border border-red-200 bg-red-50 p-5 text-red-700">
+          Cannot determine account role. Check that Firestore rules allow the
+          authenticated user to read medical-staff/{`{uid}`}.
+        </div>
+      );
+    }
     if (isDoctor) {
       return <DoctorDashboardPage />;
     }
