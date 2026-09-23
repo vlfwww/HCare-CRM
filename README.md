@@ -51,10 +51,24 @@ keys identify a Firebase application but do not replace Firestore security rules
 
 ## Deployment
 
-The project produces a static `dist/` directory with `npm run build` and can be deployed to Firebase Hosting, Vercel, Netlify, or another static hosting
-provider. Configure the same `VITE_FIREBASE_*` variables in the provider.
-No deployment URL is included yet because deployment credentials and a target
-hosting project are environment-specific.
+The project is deployed to GitHub Pages by
+[`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml) on
+every push to `main`. The workflow also supports manual runs from the
+**Actions** tab.
+
+Before the first deployment:
+
+1. In **Settings → Pages**, set **Source** to **GitHub Actions**.
+2. Add the Firebase configuration as repository or environment secrets named
+   `VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_AUTH_DOMAIN`,
+   `VITE_FIREBASE_PROJECT_ID`, `VITE_FIREBASE_STORAGE_BUCKET`,
+   `VITE_FIREBASE_MESSAGING_SENDER_ID`, `VITE_FIREBASE_APP_ID`, and
+   `VITE_FIREBASE_MEASUREMENT_ID`.
+3. Push to `main` and wait for the **Deploy to GitHub Pages** workflow.
+
+The application URL is
+`https://vlfwww.github.io/HCare-CRM/`. The Vite base path is enabled only in
+GitHub Actions, so local development continues to use `/`.
 
 ## Quality status
 
