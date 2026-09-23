@@ -5,7 +5,6 @@ import {
 import { auth } from "@/app/providers/firebase";
 import { signInWithGoogle } from "../model/useGoogleAuth";
 import { getAuthErrorMessage } from "../model/authError";
-import { ensurePatientProfile } from "@/shared/lib/ensurePatientProfile";
 import { useNavigate, Link } from "@tanstack/react-router";
 import { Activity, Loader2, AlertCircle } from "lucide-react";
 
@@ -23,8 +22,7 @@ export const LoginPage: React.FC = () => {
     setLoading(true);
 
     try {
-      const result = await signInWithEmailAndPassword(auth, email, password);
-      await ensurePatientProfile(result.user);
+      await signInWithEmailAndPassword(auth, email, password);
       navigate({ to: "/" });
     } catch (error: unknown) {
       setError(getAuthErrorMessage(error, "Неверный email или пароль."));
