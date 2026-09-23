@@ -18,6 +18,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -35,12 +37,12 @@ jobs:
         run: npm ci
 
       - name: Deploy Firestore rules
-        if: ${{ secrets.FIREBASE_SERVICE_ACCOUNT != '' }}
+        if: env.FIREBASE_SERVICE_ACCOUNT != ''
         uses: w9jds/firebase-action@v13.32.0
         with:
           args: deploy --only firestore:rules --project hcare-8158
         env:
-          GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          GCP_SA_KEY: ${{ env.FIREBASE_SERVICE_ACCOUNT }}
 
       - name: Build
         run: npm run build
