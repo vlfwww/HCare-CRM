@@ -3,6 +3,7 @@ import { auth, db } from "@/app/providers/firebase";
 import { doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { useStaffQuery } from "./useStaffQuery";
 import type { AppointmentItem } from "@/features/patient-profile/model/types";
+import { addUserNotification } from "@/shared/lib/notifications";
 
 export const useMedicalStaff = () => {
   const { data: staffList, isLoading, isError } = useStaffQuery();
@@ -72,9 +73,20 @@ export const useMedicalStaff = () => {
       await updateDoc(userRef, {
         appointments: arrayUnion(newAppointment),
       });
+      await addUserNotification(userId, {
+        title: "Appointment booked",
+        message: `${newAppointment.doctorName || "Doctor"} · ${newAppointment.startTime || "Scheduled time"}`,
+        type: "success",
+      });
+      await addUserNotification(selectedDoctorId, {
+        title: "New appointment request",
+        message: `${newAppointment.patientName || "Patient"} · ${newAppointment.startTime || "Scheduled time"}`,
+        type: "info",
+      });
       console.log("Appointment successfully saved to database!");
     } catch (error) {
       console.error("Error saving appointment to database:", error);
+      throw error;
     }
   };
 

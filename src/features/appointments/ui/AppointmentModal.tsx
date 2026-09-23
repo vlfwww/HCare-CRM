@@ -144,11 +144,30 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
   const rawSlots = selectedDoctor
     ? generateSlots(selectedDoctor.availableHours)
     : [];
-  const availableSlots = rawSlots.filter((slot) => !bookedSlots.includes(slot));
+  const today = new Date();
+  const todayString = [
+    today.getFullYear(),
+    String(today.getMonth() + 1).padStart(2, "0"),
+    String(today.getDate()).padStart(2, "0"),
+  ].join("-");
+  const isSelectedDateToday = selectedDate === todayString;
+  const isSelectedDateInPast = Boolean(selectedDate && selectedDate < todayString);
+  const availableSlots = rawSlots.filter((slot) => {
+    if (bookedSlots.includes(slot)) return false;
+    return !isSelectedDateToday || slot > `${String(today.getHours()).padStart(2, "0")}:${String(today.getMinutes()).padStart(2, "0")}`;
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userId || !selectedDoctor || !selectedDate || !selectedTime) return;
+    if (
+      isSelectedDateInPast ||
+      (isSelectedDateToday &&
+        selectedTime <=
+          `${String(today.getHours()).padStart(2, "0")}:${String(today.getMinutes()).padStart(2, "0")}`)
+    ) {
+      return;
+    }
 
     setIsSubmitting(true);
     try {
@@ -156,6 +175,7 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
 
       const newAppointment = {
         id: `app-${Date.now()}`,
+        doctorId: selectedDoctor.id,
         startTime: fullStartTime,
         speciality: selectedDoctor.role,
         doctorName: selectedDoctor.name,
@@ -254,6 +274,7 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
             <input
               type="date"
               value={selectedDate}
+              min={todayString}
               onChange={(e) => {
                 setSelectedDate(e.target.value);
                 setSelectedTime("");
@@ -268,9 +289,13 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
               <label className="block text-xs font-medium text-gray-700 mb-1">
                 Available Time Slots
               </label>
-              {availableSlots.length === 0 ? (
+              {isSelectedDateInPast ? (
                 <p className="text-xs text-red-500 py-2">
-                  No available slots for this date.
+                  Please select today or a future date.
+                </p>
+              ) : availableSlots.length === 0 ? (
+                <p className="text-xs text-red-500 py-2">
+                  No available slots for this date or all times have passed.
                 </p>
               ) : (
                 <select

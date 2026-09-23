@@ -13,6 +13,8 @@ export interface ActivityItem {
 
 export interface AppointmentItem {
   id: string;
+  doctorId?: string;
+  patientName?: string;
   startTime?: string;
   date?: string;
   time?: string;

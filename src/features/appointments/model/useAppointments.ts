@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { db } from "@/app/providers/firebase";
 import { doc, setDoc, arrayUnion } from "firebase/firestore";
 import type { AppointmentItem } from "../../patient-profile/model/types";
+import { addUserNotification } from "@/shared/lib/notifications";
 
 export const useAppointments = (
   userId: string,
@@ -28,6 +29,18 @@ export const useAppointments = (
         { appointments: arrayUnion(newAppointment) },
         { merge: true },
       );
+      await addUserNotification(userId, {
+        title: "Appointment booked",
+        message: `${newAppointment.doctorName || "Doctor"} · ${newAppointment.startTime || "Scheduled time"}`,
+        type: "success",
+      });
+      if (newAppointment.doctorId) {
+        await addUserNotification(newAppointment.doctorId, {
+          title: "New appointment request",
+          message: `${newAppointment.patientName || "Patient"} · ${newAppointment.startTime || "Scheduled time"}`,
+          type: "info",
+        });
+      }
       return newAppointment;
     },
     onSuccess: (newAppointment) => {

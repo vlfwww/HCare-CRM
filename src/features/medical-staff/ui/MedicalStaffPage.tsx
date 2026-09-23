@@ -29,9 +29,9 @@ export const MedicalStaffPage: React.FC = () => {
   } = useMedicalStaff();
 
   return (
-    <div className="max-w-[1400px] mx-auto px-6 py-6 font-manrope">
-      <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-xs">
-        <div className="flex items-center justify-between mb-6">
+    <div className="max-w-[1400px] mx-auto px-3 sm:px-6 py-4 sm:py-6 font-manrope">
+      <div className="bg-white rounded-2xl border border-gray-200 p-4 sm:p-8 shadow-xs">
+        <div className="flex flex-wrap gap-3 items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
             Medical Staff
           </h1>

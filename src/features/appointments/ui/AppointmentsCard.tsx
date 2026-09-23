@@ -25,7 +25,7 @@ export const AppointmentsCard: React.FC<AppointmentsCardProps> = ({
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm font-manrope overflow-hidden relative">
-      <div className="flex items-center justify-between px-6 py-5">
+      <div className="flex items-center justify-between px-4 sm:px-6 py-5">
         <p className="text-lg font-semibold text-gray-800">Appointments</p>
 
         {canCreate && (
@@ -49,7 +49,7 @@ export const AppointmentsCard: React.FC<AppointmentsCardProps> = ({
           <table className="w-full text-left text-xs">
             <thead>
               <tr className="bg-gray-50/70 text-gray-400 border-y border-gray-100">
-                <th className="py-3 px-6 font-medium">Start Time</th>
+                <th className="py-3 px-4 sm:px-6 font-medium">Start Time</th>
                 <th className="py-3 px-4 font-medium">Speciality & Doctor</th>
                 <th className="py-3 px-4 font-medium">Status</th>
               </tr>
@@ -64,7 +64,7 @@ export const AppointmentsCard: React.FC<AppointmentsCardProps> = ({
 
                 return (
                   <tr key={app.id || `appointment-${index}`}>
-                    <td className="py-4 px-6 text-gray-800 font-medium">
+                    <td className="py-4 px-4 sm:px-6 text-gray-800 font-medium">
                       <div>{datePart || rawTime}</div>
                       {timePart && (
                         <div className="text-gray-500 mt-0.5">{timePart}</div>

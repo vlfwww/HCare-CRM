@@ -1,10 +1,11 @@
 import React from "react";
-import { Menu, Bell, LogOut, User as UserIcon } from "lucide-react";
+import { Menu, Bell, LogOut, User as UserIcon, CheckCircle2, Info, AlertTriangle } from "lucide-react";
 import logoImage from "../../assets/icons/logo.svg";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/shared/lib/useAuth";
 import { auth } from "@/app/providers/firebase";
 import { signOut } from "firebase/auth";
+import { useNotifications } from "@/shared/lib/useNotifications";
 
 interface HeaderProps {
   onToggleSidebar: () => void;
@@ -12,6 +13,10 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
   const { user, loading } = useAuth();
+  const { notifications, unreadCount, markAllAsRead } = useNotifications(
+    user?.uid,
+  );
+  const [isNotificationsOpen, setIsNotificationsOpen] = React.useState(false);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -23,8 +28,18 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
     }
   };
 
+  const handleNotificationsToggle = () => {
+    const willOpen = !isNotificationsOpen;
+    setIsNotificationsOpen(willOpen);
+    if (willOpen) {
+      void markAllAsRead().catch((error) => {
+        console.error("Error marking notifications as read:", error);
+      });
+    }
+  };
+
   return (
-    <header className="w-full bg-white border-b border-gray-200 px-8 py-3.5 flex items-center justify-between shadow-xs font-poppins z-35">
+    <header className="w-full bg-white border-b border-gray-200 px-3 sm:px-8 py-3.5 flex items-center justify-between shadow-xs font-poppins z-35">
       <div className="flex items-center gap-6">
         <button
           onClick={onToggleSidebar}
@@ -49,10 +64,61 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
         </Link>
       </div>
 
-      <div className="flex items-center gap-5">
-        <button className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer">
+      <div className="flex items-center gap-2 sm:gap-5">
+        <div className="relative">
+        <button
+          onClick={handleNotificationsToggle}
+          className="relative p-2 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+          aria-label="Уведомления"
+          aria-expanded={isNotificationsOpen}
+        >
           <Bell className="w-5 h-5" />
+          {unreadCount > 0 && (
+            <span className="absolute -right-0.5 -top-0.5 min-w-4 h-4 px-1 rounded-full bg-emerald-500 text-white text-[10px] leading-4 font-semibold">
+              {unreadCount > 9 ? "9+" : unreadCount}
+            </span>
+          )}
         </button>
+        {isNotificationsOpen && user && (
+          <div className="absolute right-0 top-11 z-50 w-[calc(100vw-1.5rem)] max-w-sm overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xl">
+            <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
+              <h2 className="text-sm font-semibold text-gray-800">Notifications</h2>
+              <span className="text-xs text-gray-400">{notifications.length}</span>
+            </div>
+            <div className="max-h-80 overflow-y-auto">
+              {notifications.length === 0 ? (
+                <p className="px-4 py-8 text-center text-xs text-gray-400">
+                  No notifications yet
+                </p>
+              ) : (
+                notifications.map((notification) => {
+                  const Icon =
+                    notification.type === "success"
+                      ? CheckCircle2
+                      : notification.type === "warning"
+                        ? AlertTriangle
+                        : Info;
+                  return (
+                    <div
+                      key={notification.id}
+                      className="flex gap-3 border-b border-gray-50 px-4 py-3 last:border-0"
+                    >
+                      <Icon className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
+                      <div className="min-w-0">
+                        <p className="text-xs font-semibold text-gray-800">{notification.title}</p>
+                        <p className="mt-0.5 break-words text-xs text-gray-500">{notification.message}</p>
+                        <p className="mt-1 text-[10px] text-gray-400">
+                          {new Date(notification.createdAt).toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </div>
+        )}
+        </div>
 
         {loading ? (
           <div className="w-9 h-9 rounded-full bg-gray-100 animate-pulse" />

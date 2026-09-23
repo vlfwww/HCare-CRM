@@ -70,9 +70,9 @@ export const PatientProfilePage: React.FC<PatientProfilePageProps> = ({
   const canEditProfile = !isDoctor;
 
   return (
-    <div className="max-w-[1400px] mx-auto px-6 py-6 font-manrope relative">
-      <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
-        <div className="flex justify-between items-center mb-4">
+    <div className="max-w-[1400px] mx-auto px-3 sm:px-6 py-4 sm:py-6 font-manrope relative">
+      <div className="bg-white rounded-2xl border border-gray-200 p-4 sm:p-8 shadow-sm">
+        <div className="flex flex-wrap gap-3 justify-between items-center mb-4">
           <PatientHeader
             fullName={profileData.fullName}
             role={profileData.role}
@@ -93,7 +93,7 @@ export const PatientProfilePage: React.FC<PatientProfilePageProps> = ({
           )}
         </div>
 
-        <div className="flex flex-wrap gap-8 border-b border-gray-100 mb-8 pb-1">
+        <div className="flex flex-wrap gap-x-6 gap-y-2 border-b border-gray-100 mb-8 pb-1">
           {tabsConfig.map((tab) => {
             const isActive = activeTab === tab.id;
             return (
@@ -119,8 +119,8 @@ export const PatientProfilePage: React.FC<PatientProfilePageProps> = ({
             availableSurveys={availableSurveys}
             feedbacks={isDoctor ? [] : feedbacks}
             onEditProfile={canEditProfile ? handleOpenModal : undefined}
-            onAppointmentCreated={(newApp) => {
-              void addAppointmentToDb(
+            onAppointmentCreated={async (newApp) => {
+              await addAppointmentToDb(
                 newApp as unknown as Parameters<typeof addAppointmentToDb>[0],
               );
             }}
