@@ -1,46 +1,20 @@
-import React, { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/app/providers/firebase";
-import { signInWithGoogle } from "../model/useGoogleAuth";
-import { getAuthErrorMessage } from "../model/authError";
-import { useNavigate, Link } from "@tanstack/react-router";
+import React from "react";
+import { useAuthForm } from "../model/useAuthForm";
+import { Link } from "@tanstack/react-router";
 import { Activity, Loader2, AlertCircle } from "lucide-react";
 
 export const LoginPage: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
-  const navigate = useNavigate();
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      navigate({ to: "/" });
-    } catch (error: unknown) {
-      setError(getAuthErrorMessage(error, "Неверный email или пароль."));
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleGoogleLogin = async () => {
-    setError("");
-    setGoogleLoading(true);
-    try {
-      await signInWithGoogle();
-      navigate({ to: "/" });
-    } catch (error: unknown) {
-      setError(getAuthErrorMessage(error, "Не удалось войти через Google."));
-    } finally {
-      setGoogleLoading(false);
-    }
-  };
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    error,
+    loading,
+    googleLoading,
+    handleSubmit,
+    handleGoogleSubmit,
+  } = useAuthForm("login");
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-8 font-manrope">
@@ -64,12 +38,13 @@ export const LoginPage: React.FC = () => {
           </div>
         )}
 
-        <form onSubmit={handleLogin} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1">
+            <label htmlFor="login-email" className="block text-xs font-semibold text-gray-600 mb-1">
               Email
             </label>
             <input
+              id="login-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -80,10 +55,11 @@ export const LoginPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1">
+            <label htmlFor="login-password" className="block text-xs font-semibold text-gray-600 mb-1">
               Password
             </label>
             <input
+              id="login-password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -115,7 +91,7 @@ export const LoginPage: React.FC = () => {
 
         <button
           type="button"
-          onClick={handleGoogleLogin}
+          onClick={handleGoogleSubmit}
           disabled={googleLoading}
           className="w-full py-2.5 px-4 border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold rounded-xl text-sm transition-colors flex items-center justify-center gap-3 cursor-pointer shadow-2xs"
         >

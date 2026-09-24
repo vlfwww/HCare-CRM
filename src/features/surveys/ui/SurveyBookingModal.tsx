@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import type { SurveyItem } from "../../patient-profile/model/types";
+import { useBodyScrollLock } from "@/shared/lib/useBodyScrollLock";
 
 interface SurveyBookingModalProps {
   isOpen: boolean;
@@ -20,6 +21,7 @@ export const SurveyBookingModal: React.FC<SurveyBookingModalProps> = ({
   const [selectedTime, setSelectedTime] = useState("");
   const [dateError, setDateError] = useState("");
   const [timeError, setTimeError] = useState("");
+  useBodyScrollLock(isOpen);
 
   useEffect(() => {
     if (availableSurveys.length > 0 && !selectedTitle) {
@@ -28,18 +30,12 @@ export const SurveyBookingModal: React.FC<SurveyBookingModalProps> = ({
   }, [availableSurveys, selectedTitle]);
 
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
+    if (!isOpen) {
       setSelectedDate("");
       setSelectedTime("");
       setDateError("");
       setTimeError("");
     }
-    return () => {
-      document.body.style.overflow = "unset";
-    };
   }, [isOpen]);
 
   const validateInputs = (dateVal: string, timeVal: string) => {
@@ -155,10 +151,11 @@ export const SurveyBookingModal: React.FC<SurveyBookingModalProps> = ({
 
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">
+            <label htmlFor="survey-title" className="block text-xs font-medium text-gray-600 mb-1">
               Select Survey
             </label>
             <select
+              id="survey-title"
               value={selectedTitle}
               onChange={(e) => setSelectedTitle(e.target.value)}
               className="w-full bg-transparent border-b border-gray-200 rounded-none px-0 pb-2 text-sm text-gray-700 focus:outline-none focus:border-emerald-500 cursor-pointer"
@@ -172,10 +169,11 @@ export const SurveyBookingModal: React.FC<SurveyBookingModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">
+            <label htmlFor="survey-date" className="block text-xs font-medium text-gray-600 mb-1">
               Date
             </label>
             <input
+              id="survey-date"
               type="date"
               value={selectedDate}
               min={new Date().toISOString().split("T")[0]}
@@ -192,10 +190,11 @@ export const SurveyBookingModal: React.FC<SurveyBookingModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">
+            <label htmlFor="survey-time" className="block text-xs font-medium text-gray-600 mb-1">
               Time
             </label>
             <input
+              id="survey-time"
               type="time"
               value={selectedTime}
               onChange={handleTimeChange}

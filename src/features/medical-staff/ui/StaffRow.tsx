@@ -64,6 +64,7 @@ export const StaffRow: React.FC<StaffRowProps> = ({ person, onBook }) => {
             Appointment
           </span>
           <button
+            type="button"
             onClick={onBook}
             className="flex items-center gap-2 border-none bg-transparent p-0 text-xs font-medium text-emerald-600 transition-colors hover:text-emerald-700 cursor-pointer"
           >

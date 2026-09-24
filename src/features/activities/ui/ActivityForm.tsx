@@ -24,7 +24,11 @@ export const ActivityForm: React.FC<ActivityFormProps> = ({
 
   return (
     <form onSubmit={onSubmit} className="relative mb-4">
+      <label htmlFor="activity-post" className="sr-only">
+        {placeholderText}
+      </label>
       <input
+        id="activity-post"
         type="text"
         value={postText}
         onChange={(e) => setPostText(e.target.value)}

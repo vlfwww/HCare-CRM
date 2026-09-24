@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import { User, Users, MessageSquare, X, Home, Lock } from "lucide-react";
 import { useAuth } from "@/shared/lib/useAuth";
+import { useBodyScrollLock } from "@/shared/lib/useBodyScrollLock";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -22,16 +23,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const isStaff = currentPath === "/medical-staff";
   const isFeedback = currentPath === "/feedback";
 
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [isOpen]);
+  useBodyScrollLock(isOpen);
 
   const handleProtectedClick = (e: React.MouseEvent) => {
     if (!user) {
@@ -55,6 +47,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       />
 
       <aside
+        id="main-sidebar"
+        aria-label="Main navigation"
+        aria-hidden={!isOpen}
         className={`fixed top-0 left-0 bottom-0 w-72 bg-white border-r border-gray-200 z-50 flex flex-col font-manrope shadow-2xl transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}

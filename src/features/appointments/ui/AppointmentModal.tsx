@@ -4,6 +4,7 @@ import { db } from "@/app/providers/firebase";
 import { collection, getDoc, getDocs, doc } from "firebase/firestore";
 import type { StaffMember } from "@/entities/staff/model/types";
 import type { AppointmentItem } from "@/features/patient-profile/model/types";
+import { useBodyScrollLock } from "@/shared/lib/useBodyScrollLock";
 
 interface AppointmentModalProps {
   isOpen: boolean;
@@ -34,16 +35,7 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [bookedSlots, setBookedSlots] = useState<string[]>([]);
 
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [isOpen]);
+  useBodyScrollLock(isOpen);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -243,13 +235,14 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
+            <label htmlFor="appointment-doctor" className="block text-xs font-medium text-gray-700 mb-1">
               Doctor / Role
             </label>
             {isLoading ? (
               <p className="text-xs text-gray-400 py-2">Loading doctors...</p>
             ) : (
               <select
+                id="appointment-doctor"
                 value={selectedDoctorId}
                 onChange={(e) => {
                   setSelectedDoctorId(e.target.value);
@@ -269,10 +262,11 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
+            <label htmlFor="appointment-date" className="block text-xs font-medium text-gray-700 mb-1">
               Appointment Date
             </label>
             <input
+              id="appointment-date"
               type="date"
               value={selectedDate}
               min={todayString}
@@ -287,7 +281,7 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
 
           {selectedDoctor && selectedDate && (
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
+              <label htmlFor="appointment-time" className="block text-xs font-medium text-gray-700 mb-1">
                 Available Time Slots
               </label>
               {isSelectedDateInPast ? (
@@ -300,6 +294,7 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
                 </p>
               ) : (
                 <select
+                  id="appointment-time"
                   value={selectedTime}
                   onChange={(e) => setSelectedTime(e.target.value)}
                   required
@@ -317,10 +312,11 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
           )}
 
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
+            <label htmlFor="appointment-anamnesis" className="block text-xs font-medium text-gray-700 mb-1">
               Anamnesis / Symptoms
             </label>
             <textarea
+              id="appointment-anamnesis"
               value={anamnesis}
               onChange={(e) => setAnamnesis(e.target.value)}
               rows={3}

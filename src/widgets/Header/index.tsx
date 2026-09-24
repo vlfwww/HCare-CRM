@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import {
   Menu,
   Bell,
@@ -14,6 +14,7 @@ import { useAuth } from "@/shared/lib/useAuth";
 import { auth } from "@/app/providers/firebase";
 import { signOut } from "firebase/auth";
 import { useNotifications } from "@/shared/lib/useNotifications";
+import { useClickOutside } from "@/shared/lib/useClickOutside";
 
 interface HeaderProps {
   onToggleSidebar: () => void;
@@ -28,23 +29,11 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
   const notificationRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        notificationRef.current &&
-        !notificationRef.current.contains(event.target as Node)
-      ) {
-        setIsNotificationsOpen(false);
-      }
-    };
-
-    if (isNotificationsOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isNotificationsOpen]);
+  const closeNotifications = useCallback(
+    () => setIsNotificationsOpen(false),
+    [],
+  );
+  useClickOutside(notificationRef, closeNotifications, isNotificationsOpen);
 
   const handleLogout = async () => {
     try {
@@ -83,7 +72,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
           <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
             <img
               src={logoImage}
-              alt="logo"
+              alt="HCare"
               className="w-5 h-5 object-contain"
             />
           </div>

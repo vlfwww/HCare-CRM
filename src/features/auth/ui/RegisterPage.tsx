@@ -1,55 +1,20 @@
-import React, { useState } from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/app/providers/firebase";
-import { ensurePatientProfile } from "@/shared/lib/ensurePatientProfile";
-import { signInWithGoogle } from "../model/useGoogleAuth";
-import { getAuthErrorMessage } from "../model/authError";
-import { useNavigate, Link } from "@tanstack/react-router";
+import React from "react";
+import { Link } from "@tanstack/react-router";
+import { useAuthForm } from "../model/useAuthForm";
 import { Activity, Loader2, AlertCircle } from "lucide-react";
 
 export const RegisterPage: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
-  const navigate = useNavigate();
-
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-
-    try {
-      const result = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password,
-      );
-      await ensurePatientProfile(result.user);
-      await navigate({ to: "/", replace: true });
-    } catch (error: unknown) {
-      setError(getAuthErrorMessage(error, "Не удалось создать аккаунт."));
-      setLoading(false);
-    }
-  };
-
-  const handleGoogleRegister = async () => {
-    setError("");
-    setGoogleLoading(true);
-    try {
-      await signInWithGoogle();
-      await navigate({ to: "/", replace: true });
-    } catch (error: unknown) {
-      setError(
-        getAuthErrorMessage(
-          error,
-          "Не удалось зарегистрироваться через Google.",
-        ),
-      );
-      setGoogleLoading(false);
-    }
-  };
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    error,
+    loading,
+    googleLoading,
+    handleSubmit,
+    handleGoogleSubmit,
+  } = useAuthForm("register");
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-8 font-manrope">
@@ -73,12 +38,13 @@ export const RegisterPage: React.FC = () => {
           </div>
         )}
 
-        <form onSubmit={handleRegister} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1">
+            <label htmlFor="register-email" className="block text-xs font-semibold text-gray-600 mb-1">
               Email
             </label>
             <input
+              id="register-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -89,10 +55,11 @@ export const RegisterPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1">
+            <label htmlFor="register-password" className="block text-xs font-semibold text-gray-600 mb-1">
               Password
             </label>
             <input
+              id="register-password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -124,7 +91,7 @@ export const RegisterPage: React.FC = () => {
 
         <button
           type="button"
-          onClick={handleGoogleRegister}
+          onClick={handleGoogleSubmit}
           disabled={googleLoading}
           className="w-full py-2.5 px-4 border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold rounded-xl text-sm transition-colors flex items-center justify-center gap-3 cursor-pointer shadow-2xs"
         >
