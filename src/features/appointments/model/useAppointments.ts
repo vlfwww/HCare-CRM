@@ -34,13 +34,6 @@ export const useAppointments = (
         message: `${newAppointment.doctorName || "Doctor"} · ${newAppointment.startTime || "Scheduled time"}`,
         type: "success",
       });
-      if (newAppointment.doctorId) {
-        await addUserNotification(newAppointment.doctorId, {
-          title: "New appointment request",
-          message: `${newAppointment.patientName || "Patient"} · ${newAppointment.startTime || "Scheduled time"}`,
-          type: "info",
-        });
-      }
       return newAppointment;
     },
     onSuccess: (newAppointment) => {

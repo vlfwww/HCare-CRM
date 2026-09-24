@@ -120,7 +120,7 @@ export const usePatientProfile = (
     []) as unknown as AppointmentItem[];
 
   const { appointments, addAppointmentToDb } = useAppointments(
-    userId,
+    user?.uid || "",
     initialAppointments,
   );
 

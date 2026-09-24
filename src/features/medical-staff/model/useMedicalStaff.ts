@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { auth, db } from "@/app/providers/firebase";
-import { doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
+import { arrayUnion, doc, getDoc, setDoc } from "firebase/firestore";
 import { useStaffQuery } from "./useStaffQuery";
 import type { AppointmentItem } from "@/features/patient-profile/model/types";
 import { addUserNotification } from "@/shared/lib/notifications";
@@ -70,19 +70,22 @@ export const useMedicalStaff = () => {
     if (!userId) return;
     try {
       const userRef = doc(db, "users", userId);
-      await updateDoc(userRef, {
-        appointments: arrayUnion(newAppointment),
-      });
-      await addUserNotification(userId, {
-        title: "Appointment booked",
-        message: `${newAppointment.doctorName || "Doctor"} · ${newAppointment.startTime || "Scheduled time"}`,
-        type: "success",
-      });
-      await addUserNotification(selectedDoctorId, {
-        title: "New appointment request",
-        message: `${newAppointment.patientName || "Patient"} · ${newAppointment.startTime || "Scheduled time"}`,
-        type: "info",
-      });
+      await setDoc(
+        userRef,
+        { appointments: arrayUnion(newAppointment) },
+        { merge: true },
+      );
+      handleCloseModal();
+
+      try {
+        await addUserNotification(userId, {
+          title: "Appointment booked",
+          message: `${newAppointment.doctorName || "Doctor"} · ${newAppointment.startTime || "Scheduled time"}`,
+          type: "success",
+        });
+      } catch (error) {
+        console.error("Appointment was saved, but notification failed:", error);
+      }
       console.log("Appointment successfully saved to database!");
     } catch (error) {
       console.error("Error saving appointment to database:", error);

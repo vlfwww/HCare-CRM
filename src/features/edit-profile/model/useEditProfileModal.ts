@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { auth, db } from "@/app/providers/firebase";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import { useQueryClient } from "@tanstack/react-query";
 import type { PatientProfileData } from "@/entities/patient/model/types";
 
@@ -155,16 +155,24 @@ export const useEditProfileModal = (
     if (!currentUser) return;
 
     try {
-      const dataToSave = {
-        ...formData,
-        personalInfo: {
-          ...formData.personalInfo,
-          birthDate: formatDateForDisplay(formData.personalInfo?.birthDate),
-        },
-      };
-
       const docRef = doc(db, "users", currentUser.uid);
-      await setDoc(docRef, dataToSave, { merge: false });
+      await updateDoc(docRef, {
+        fullName: formData.fullName,
+        "contactInfo.phone": formData.contactInfo.phone,
+        "contactInfo.homePhone": formData.contactInfo.homePhone,
+        "contactInfo.address": formData.contactInfo.address,
+        "contactInfo.email": formData.contactInfo.email,
+        "personalInfo.gender": formData.personalInfo.gender,
+        "personalInfo.birthDate": formatDateForDisplay(
+          formData.personalInfo.birthDate,
+        ),
+        "personalInfo.nationality": formData.personalInfo.nationality,
+        "personalInfo.maritalStatus": formData.personalInfo.maritalStatus,
+        "personalInfo.emergencyContact":
+          formData.personalInfo.emergencyContact,
+        "insurance.memberId": formData.insurance.memberId,
+        "insurance.provider": formData.insurance.provider,
+      });
       queryClient.invalidateQueries({ queryKey: ["patient", currentUser.uid] });
       onClose();
     } catch (err) {
