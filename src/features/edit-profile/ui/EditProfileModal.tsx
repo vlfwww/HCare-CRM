@@ -190,11 +190,14 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
                 )}
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">
+                <label
+                  htmlFor="edit-profile-marital-status"
+                  className="block text-xs text-gray-500 mb-1"
+                >
                   Marital status *
                 </label>
-                <input
-                  type="text"
+                <select
+                  id="edit-profile-marital-status"
                   value={formData.personalInfo?.maritalStatus || ""}
                   onChange={(e) =>
                     handleChange(
@@ -204,7 +207,15 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
                     )
                   }
                   className={getInputClass("maritalStatus")}
-                />
+                >
+                  <option value="" disabled>
+                    Select marital status
+                  </option>
+                  <option value="Single">Single</option>
+                  <option value="Married">Married</option>
+                  <option value="Divorced">Divorced</option>
+                  <option value="Widowed">Widowed</option>
+                </select>
                 {errors.maritalStatus && (
                   <span className="text-red-500 text-[10px] block mt-0.5">
                     {errors.maritalStatus}
