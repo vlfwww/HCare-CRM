@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useCallback } from "react";
 import type {
   ActivityItem,
   ActivityType,
@@ -10,47 +10,44 @@ import {
   updateDoc,
   doc,
   onSnapshot,
+  getDocs,
   query,
   orderBy,
 } from "firebase/firestore";
+import { useFirestoreRealtimeQuery } from "@/shared/lib/useFirestoreRealtimeQuery";
 
 export const useActivities = (userId: string) => {
-  const [activities, setActivities] = useState<ActivityItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<ActivityType>("timeline");
   const [searchQuery, setSearchQuery] = useState("");
   const [postText, setPostText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  useEffect(() => {
-    if (!userId) {
-      setIsLoading(false);
-      return;
-    }
-
-    const q = query(
-      collection(db, `users/${userId}/activities`),
-      orderBy("date", "desc"),
-    );
-
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        const items: ActivityItem[] = snapshot.docs.map((docSnap) => ({
+  const activitiesQuery = useFirestoreRealtimeQuery<ActivityItem[]>({
+    queryKey: ["activities", userId],
+    enabled: Boolean(userId),
+    fetchInitialData: useCallback(async () => {
+      const snapshot = await getDocs(query(
+        collection(db, `users/${userId}/activities`),
+        orderBy("date", "desc"),
+      ));
+      return snapshot.docs.map((docSnap) => ({
+        id: docSnap.id,
+        ...(docSnap.data() as Omit<ActivityItem, "id">),
+      }));
+    }, [userId]),
+    subscribe: useCallback((onData, onError) => {
+      if (!userId) return () => undefined;
+      return onSnapshot(
+        query(collection(db, `users/${userId}/activities`), orderBy("date", "desc")),
+        (snapshot) => onData(snapshot.docs.map((docSnap) => ({
           id: docSnap.id,
           ...(docSnap.data() as Omit<ActivityItem, "id">),
-        }));
-        setActivities(items);
-        setIsLoading(false);
-      },
-      (error) => {
-        console.error("Error fetching activities:", error);
-        setIsLoading(false);
-      },
-    );
-
-    return () => unsubscribe();
-  }, [userId]);
+        }))),
+        onError,
+      );
+    }, [userId]),
+  });
+  const activities = activitiesQuery.data ?? [];
 
   const filteredActivities = useMemo(() => {
     return activities.filter((item) => {
@@ -118,7 +115,7 @@ export const useActivities = (userId: string) => {
     postText,
     setPostText,
     filteredActivities,
-    isLoading,
+    isLoading: activitiesQuery.isLoading,
     isModalOpen,
     setIsModalOpen,
     handleCreateActivity,

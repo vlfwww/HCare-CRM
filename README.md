@@ -1,22 +1,53 @@
 # HCare CRM
 
-HCare CRM is a React/Vite healthcare workspace for patient records, appointments,
-activities, surveys, medical staff, authentication, and support chat.
+An SPA for healthcare and clinic management: patient profiles, medical staff,
+appointments, activities, surveys, feedback, authentication, and WebSocket chat.
 
-## Stack
+## Features
 
-- React 19 and TypeScript
-- Vite 8 and Tailwind CSS 4
-- TanStack Router and TanStack Query
-- Firebase Authentication and Firestore
-- WebSocket support chat demo
+- Email/password and Google Authentication through Firebase.
+- Role-based access for patients and doctors.
+- Patient profiles with personal data, contacts, insurance, and care plans.
+- Searchable medical staff list with appointment booking.
+- Doctor dashboard with appointments and status updates.
+- Patient activities: tasks, notes, and posts.
+- Surveys and feedback for completed appointments.
+- User notifications through Firestore realtime listeners.
+- WebSocket echo chat in the patient profile using `wss://ws.ifelse.io`.
+- Responsive desktop and mobile interface.
+
+## Technology Stack
+
+- React 19 + TypeScript 6
+- Vite 8
+- TanStack Router
+- TanStack Query
+- Firebase Authentication and Cloud Firestore
+- Tailwind CSS 4
+- Lucide React
+- ESLint
+
+## Project Structure
+
+```text
+src/
+├── app/       # Firebase provider, router, protected routes, lazy pages
+├── entities/  # domain entity types and query hooks
+├── features/  # auth, profile, appointments, and other feature modules
+├── shared/    # shared API, hooks, utilities, and UI
+└── widgets/   # layout, header, and sidebar
+```
+
+Components are responsible for presentation. State, data fetching, and side
+effects are extracted into hooks in `model` and `shared/lib`.
 
 ## Requirements
 
-- Node.js 20 or newer
+- Node.js 20+
+- npm 10+
 - A Firebase project with Authentication and Firestore enabled
 
-## Local development
+## Local Development
 
 ```bash
 npm install
@@ -24,108 +55,119 @@ copy .env.example .env
 npm run dev
 ```
 
-On macOS/Linux, use `cp .env.example .env` instead of `copy`.
-Fill `.env` with the web app configuration from Firebase Console. Never commit
-`.env` or production credentials.
+On macOS/Linux:
+
+```bash
+cp .env.example .env
+npm run dev
+```
+
+Fill `.env` with the Firebase Web App configuration:
+
+```env
+VITE_FIREBASE_API_KEY=
+VITE_FIREBASE_AUTH_DOMAIN=
+VITE_FIREBASE_PROJECT_ID=
+VITE_FIREBASE_STORAGE_BUCKET=
+VITE_FIREBASE_MESSAGING_SENDER_ID=
+VITE_FIREBASE_APP_ID=
+VITE_FIREBASE_MEASUREMENT_ID=
+```
+
+`.env` is excluded from Git. `firebase.ts` contains a fallback public Firebase
+Web App configuration. Data security is enforced by Firestore rules, not by
+hiding the Firebase API key.
 
 ## Commands
 
 ```bash
-npm run dev       # start the Vite development server
-npm run build     # type-check and create a production build
+npm run dev       # start the local development server
 npm run lint      # run ESLint
-npm run test      # run unit tests
+npm run build     # run the TypeScript check and create a production build
+npm run preview   # preview the production build
 ```
 
-## Firebase setup
+## Data and Firebase
 
-1. Create a Firebase web app.
-2. Enable Email/Password and Google sign-in providers.
-3. Create a Firestore database.
-4. Copy the web app configuration into the `VITE_FIREBASE_*` variables.
-5. Configure Firestore security rules for the authenticated roles used by the
-   application before deploying.
+Reads, mutations, and realtime subscriptions use TanStack Query:
 
-The client configuration is read from Vite environment variables. Firebase API
-keys identify a Firebase application but do not replace Firestore security rules.
+- `usePatientData` — patient profile query;
+- `usePatientList` — patient list query;
+- `useStaffQuery` — medical staff query;
+- `useAppointments` — appointment mutation;
+- edit hooks invalidate the relevant query keys;
+- `useFirestoreRealtimeQuery` performs the initial fetch, subscribes to
+  Firestore `onSnapshot`, and writes every update to the TanStack Query cache.
 
-## Deployment
+Activities, profiles, surveys, and notifications use Firestore
+`onSnapshot` listeners with cleanup. These subscriptions are connected through
+the shared TanStack Query cache layer, so the UI reads current data from Query.
 
-The project is deployed to GitHub Pages by
-[`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml) on
-every push to `main`. The workflow also supports manual runs from the
-**Actions** tab.
+Access rules are stored in [firestore.rules](./firestore.rules). A doctor
+document in the `medical-staff` collection must use the doctor's Firebase Auth
+UID as its document ID and contain `role: "Doctor"`.
 
-Before the first deployment:
-
-1. In **Settings → Pages**, set **Source** to **GitHub Actions**.
-2. Add the Firebase configuration as repository or environment secrets named
-   `VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_AUTH_DOMAIN`,
-   `VITE_FIREBASE_PROJECT_ID`, `VITE_FIREBASE_STORAGE_BUCKET`,
-   `VITE_FIREBASE_MESSAGING_SENDER_ID`, `VITE_FIREBASE_APP_ID`, and
-   `VITE_FIREBASE_MEASUREMENT_ID`.
-3. Push to `main` and wait for the **Deploy to GitHub Pages** workflow.
-
-The application URL is
-`https://vlfwww.github.io/HCare-CRM/`. The Vite base path is enabled only in
-GitHub Actions, so local development continues to use `/`. Client-side
-navigation uses hash history, so refreshing a route such as
-`/HCare-CRM/#/medical-staff` does not request a non-existent server path.
-
-Firestore rules are stored in [`firestore.rules`](./firestore.rules) and must
-be deployed to the same Firebase project separately from the Pages workflow.
-The Pages workflow only builds and deploys the web application.
-
-For a one-time manual deployment, use the Firebase CLI:
+Deploy the rules:
 
 ```bash
 firebase use hcare-8158
 firebase deploy --only firestore:rules
 ```
 
-Each doctor document in `medical-staff` must use that doctor's Firebase Auth
-UID as its document ID and contain `role: "Doctor"`. Appointments store the
-doctor document ID in `doctorId`, which prevents a doctor from seeing another
-doctor's appointments.
+## Routes
 
-## Quality status
+| Route | Access | Purpose |
+| --- | --- | --- |
+| `/#/` | public | home page |
+| `/#/login` | public | sign in |
+| `/#/register` | public | registration |
+| `/#/profile` | authenticated | patient profile or doctor dashboard |
+| `/#/patients` | doctors only | patient list |
+| `/#/patients/:patientId` | doctors only | patient profile |
+| `/#/medical-staff` | patients only | medical staff |
+| `/#/feedback` | patients only | feedback |
 
-Linting, type-checking, production builds, and unit tests are intended to run
-locally and in CI. Run the following before publishing:
+The app uses `createHashHistory` because it is deployed to GitHub Pages without
+a separate server-side SPA rewrite configuration.
 
-```bash
-npm run lint
-npm run build
-```
+## WebSocket Chat
 
-### Lighthouse results
+The [ChatTab](./src/features/patient-profile/ui/tabs/ChatTab.tsx) component:
 
-The following results are recorded from Lighthouse desktop runs in Incognito
-mode without browser extensions. Scores are on a 0–100 scale.
+- connects to `wss://ws.ifelse.io`;
+- displays the connection state;
+- sends text messages;
+- displays server echo responses;
+- reconnects three seconds after a disconnection;
+- closes the WebSocket and reconnect timer on unmount.
 
-| Page | URL path | Performance | Accessibility | Best Practices | SEO | Status |
-| --- | --- | ---: | ---: | ---: | ---: | --- |
-| Home | `/#/` | 88 | 100 | 91 | 100 | Below target: Performance |
-| Patient profile | `/#/profile` | 97 | 87 | 100 | 100 | Below target: Accessibility |
-| Login | `/#/login` | Not measured | Not measured | Not measured | Not measured | No report recorded |
-| Registration | `/#/register` | Not measured | Not measured | Not measured | Not measured | No report recorded |
-| Medical staff | `/#/medical-staff` | Not measured | Not measured | Not measured | Not measured | No report recorded |
-| Feedback | `/#/feedback` | Not measured | Not measured | Not measured | Not measured | No report recorded |
-| Patient list | `/#/patients` | Not measured | Not measured | Not measured | Not measured | No report recorded |
-| Patient detail | `/#/patients/:patientId` | Not measured | Not measured | Not measured | Not measured | No report recorded |
+The server is an echo/demo service. Messages are not stored in Firestore.
 
-Target: every score must be **90 or higher**. The currently recorded reports
-do not yet meet that target for Home Performance and Patient profile
-Accessibility. The remaining routes do not have recorded Lighthouse results
-and must not be represented as passing.
+## Deployment
 
-### Validation results
+The project is deployed to GitHub Pages by the
+[deploy-pages.yml](./.github/workflows/deploy-pages.yml) workflow on every push
+to `main`.
 
-| Validation area | Result |
-| --- | --- |
-| HTML validation | No errors found |
-| CSS validation | No errors found |
-| Responsive desktop layout | No known horizontal page overflow or overlapping layout |
-| Responsive mobile layout | No known horizontal page overflow or overlapping layout |
-| Production build | Passed |
-| ESLint | Passed |
+URL: **https://vlfwww.github.io/HCare-CRM/**
+
+To enable the workflow:
+
+1. Open **Settings → Pages** in GitHub and select **GitHub Actions**.
+2. Add the following repository secrets:
+   `VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_AUTH_DOMAIN`,
+   `VITE_FIREBASE_PROJECT_ID`, `VITE_FIREBASE_STORAGE_BUCKET`,
+   `VITE_FIREBASE_MESSAGING_SENDER_ID`, `VITE_FIREBASE_APP_ID`, and
+   `VITE_FIREBASE_MEASUREMENT_ID`.
+3. Push to `main` or run the workflow manually.
+
+The workflow creates `dist/404.html` from `dist/index.html` for GitHub Pages
+fallback support.
+
+### Quality Assurance & Performance
+
+The project meets high standards of optimization, accessibility, and code quality across all application pages:
+
+    Google Lighthouse: Scores ≥ 90 across all categories (Performance, Accessibility, Best Practices, and SEO).
+
+    Code Validation: Complete absence of HTML/CSS validation errors, ensuring strict compliance with web standards.

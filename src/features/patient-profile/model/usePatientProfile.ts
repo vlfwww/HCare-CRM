@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { db } from "@/app/providers/firebase";
 import {
@@ -6,6 +6,7 @@ import {
   updateDoc,
   arrayUnion,
   collection,
+  getDocs,
   onSnapshot,
   query,
   addDoc,
@@ -20,6 +21,7 @@ import { useAuth } from "@/shared/lib/useAuth";
 import type { PghdItem } from "../ui/tabs/PghdTab";
 import type { PrescriptionItem } from "../ui/tabs/PrescriptionsTab";
 import { isPatientProfileComplete } from "@/shared/lib/profileCompletion";
+import { useFirestoreRealtimeQuery } from "@/shared/lib/useFirestoreRealtimeQuery";
 
 interface CarePlanItem {
   title: string;
@@ -58,53 +60,61 @@ export const usePatientProfile = (
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [carePlans, setCarePlans] = useState<CarePlanItem[]>([]);
-  const [pghdData, setPghdData] = useState<PghdItem[]>([]);
-  const [prescriptions, setPrescriptions] = useState<PrescriptionItem[]>([]);
+  const pghdQuery = useFirestoreRealtimeQuery<PghdItem[]>({
+    queryKey: ["pghd", userId],
+    enabled: Boolean(userId && activeTab === "pghd"),
+    fetchInitialData: useCallback(async () => {
+      const snapshot = await getDocs(collection(db, `users/${userId}/pghd`));
+      return snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...(doc.data() as Omit<PghdItem, "id">),
+      }));
+    }, [userId]),
+    subscribe: useCallback((onData, onError) => {
+      if (!userId) return () => undefined;
+      return onSnapshot(
+        query(collection(db, `users/${userId}/pghd`)),
+        (snapshot) => onData(snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...(doc.data() as Omit<PghdItem, "id">),
+        }))),
+        onError,
+      );
+    }, [userId]),
+  });
+  const prescriptionsQuery = useFirestoreRealtimeQuery<PrescriptionItem[]>({
+    queryKey: ["prescriptions", userId],
+    enabled: Boolean(userId && activeTab === "prescriptions"),
+    fetchInitialData: useCallback(async () => {
+      const snapshot = await getDocs(query(
+        collection(db, `users/${userId}/prescriptions`),
+        orderBy("createdAt", "desc"),
+      ));
+      return snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...(doc.data() as Omit<PrescriptionItem, "id">),
+      }));
+    }, [userId]),
+    subscribe: useCallback((onData, onError) => {
+      if (!userId) return () => undefined;
+      return onSnapshot(
+        query(collection(db, `users/${userId}/prescriptions`), orderBy("createdAt", "desc")),
+        (snapshot) => onData(snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...(doc.data() as Omit<PrescriptionItem, "id">),
+        }))),
+        onError,
+      );
+    }, [userId]),
+  });
+  const pghdData = pghdQuery.data ?? [];
+  const prescriptions = prescriptionsQuery.data ?? [];
 
   useEffect(() => {
     if (data?.carePlans) {
       setCarePlans(data.carePlans);
     }
   }, [data?.carePlans]);
-
-  useEffect(() => {
-    if (!userId || activeTab !== "pghd") return;
-
-    const q = query(collection(db, `users/${userId}/pghd`));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const items: PghdItem[] = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...(doc.data() as Omit<PghdItem, "id">),
-      }));
-      setPghdData(items);
-    });
-
-    return () => unsubscribe();
-  }, [userId, activeTab]);
-
-  useEffect(() => {
-    if (!userId || activeTab !== "prescriptions") return;
-
-    const q = query(
-      collection(db, `users/${userId}/prescriptions`),
-      orderBy("createdAt", "desc"),
-    );
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        const items: PrescriptionItem[] = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...(doc.data() as Omit<PrescriptionItem, "id">),
-        }));
-        setPrescriptions(items);
-      },
-      (error) => {
-        console.error("Error fetching prescriptions:", error);
-      },
-    );
-
-    return () => unsubscribe();
-  }, [userId, activeTab]);
 
   const initialAppointments: AppointmentItem[] = (data?.appointments ||
     []) as unknown as AppointmentItem[];
