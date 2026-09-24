@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import { User, Users, MessageSquare, X, Home, Lock } from "lucide-react";
 import { useAuth } from "@/shared/lib/useAuth";
@@ -21,6 +21,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     currentPath === "/patients" || currentPath.startsWith("/patients/");
   const isStaff = currentPath === "/medical-staff";
   const isFeedback = currentPath === "/feedback";
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
 
   const handleProtectedClick = (e: React.MouseEvent) => {
     if (!user) {

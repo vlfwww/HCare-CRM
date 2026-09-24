@@ -2,6 +2,8 @@ import React, { useRef, useState } from "react";
 import { useDoctorDashboard } from "../model/useDoctorDashboard";
 import { EditDoctorProfileModal } from "./EditDoctorProfileModal";
 import { MapPin, Building2, Clock, Calendar, Camera, UserRound } from "lucide-react";
+import { StatusDropdown } from "./StatusDropdown";
+import type { AppointmentStatus } from "../model/useStatusDropdown";
 
 export const DoctorDashboardPage: React.FC = () => {
   const {
@@ -54,7 +56,7 @@ export const DoctorDashboardPage: React.FC = () => {
     <div className="max-w-[1400px] mx-auto px-3 sm:px-6 py-4 sm:py-6 font-manrope">
       <div className="bg-white rounded-2xl border border-gray-200 p-4 sm:p-8 shadow-sm">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8 pb-6 border-b border-gray-100">
-          <div className="flex items-center gap-4">
+          <div className="flex min-w-0 items-start gap-3 sm:items-center sm:gap-4">
             <button
               type="button"
               onClick={() => avatarInputRef.current?.click()}
@@ -82,22 +84,22 @@ export const DoctorDashboardPage: React.FC = () => {
               className="hidden"
               onChange={handleAvatarChange}
             />
-            <div>
-              <h1 className="text-2xl font-bold text-gray-800">{data.name}</h1>
+            <div className="min-w-0">
+              <h1 className="break-words text-2xl font-bold text-gray-800">{data.name}</h1>
               <p className="text-sm text-emerald-600 font-medium">
                 Doctor Dashboard
               </p>
 
               <div className="flex flex-wrap items-center gap-4 mt-2 text-xs text-gray-500">
-                <span className="flex items-center gap-1">
+                <span className="flex min-w-0 items-center gap-1 break-words">
                   <Building2 className="w-3.5 h-3.5 text-gray-400" />
                   {data.hospital}
                 </span>
-                <span className="flex items-center gap-1">
+                <span className="flex min-w-0 items-center gap-1 break-words">
                   <MapPin className="w-3.5 h-3.5 text-gray-400" />
                   {data.location}
                 </span>
-                <span className="flex items-center gap-1">
+                <span className="flex min-w-0 items-center gap-1 break-words">
                   <Clock className="w-3.5 h-3.5 text-gray-400" />
                   {data.availableHours}
                 </span>
@@ -108,7 +110,7 @@ export const DoctorDashboardPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setIsEditModalOpen(true)}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors shadow-sm cursor-pointer"
+            className="w-full md:w-auto bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors shadow-sm cursor-pointer"
           >
             Edit Profile
           </button>
@@ -126,11 +128,11 @@ export const DoctorDashboardPage: React.FC = () => {
                   className="p-4 border border-gray-100 rounded-xl bg-gray-50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
                 >
                   <div>
-                    <div className="flex items-center gap-2 mb-1">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
                       <span className="font-semibold text-gray-800 text-sm">
                         {app.speciality}
                       </span>
-                      <span className="text-xs bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-md font-medium">
+                      <span className="max-w-full break-words text-xs bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-md font-medium">
                         Patient: {app.patientName || "Unknown"}
                       </span>
                     </div>
@@ -140,28 +142,22 @@ export const DoctorDashboardPage: React.FC = () => {
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
                     <span className="text-xs text-gray-400 font-medium">
                       Status:
                     </span>
-                    <select
+                    <StatusDropdown
                       value={app.status || "Scheduled"}
-                      onChange={(e) => {
+                      onChange={(status: AppointmentStatus) => {
                         if (app.patientId) {
                           void updateAppointmentStatus(
                             app.patientId,
                             app.id,
-                            e.target.value,
+                            status,
                           );
                         }
                       }}
-                      className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-gray-700 focus:outline-none focus:border-emerald-500 cursor-pointer shadow-xs"
-                    >
-                      <option value="Scheduled">Scheduled</option>
-                      <option value="Confirmed">Confirmed</option>
-                      <option value="Completed">Completed</option>
-                      <option value="Cancelled">Cancelled</option>
-                    </select>
+                    />
                   </div>
                 </div>
               ))}

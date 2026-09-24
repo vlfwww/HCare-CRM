@@ -44,9 +44,9 @@ export const PatientListPage: React.FC<PatientListPageProps> = ({
         </div>
 
         {patients.length > 0 ? (
-          <div className="overflow-x-hidden">
-            <table className="w-full table-fixed text-left border-collapse">
-              <thead>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead className="hidden sm:table-header-group">
                 <tr className="border-b border-gray-100 text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   <th className="py-3 px-4">Patient Name</th>
                   <th className="py-3 px-4">Gender</th>
@@ -54,27 +54,46 @@ export const PatientListPage: React.FC<PatientListPageProps> = ({
                   <th className="py-3 px-4">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 text-sm">
+              <tbody className="block divide-y divide-gray-100 text-sm sm:table-row-group">
                 {patients.map((patient) => (
                   <tr
                     key={patient.id}
-                    className="hover:bg-gray-50/60 transition-colors"
+                    className="block p-4 hover:bg-gray-50/60 transition-colors sm:table-row sm:p-0"
                   >
-                    <td className="py-4 px-2 sm:px-4 font-medium text-gray-800">
-                      <div className="flex items-center gap-2 min-w-0">
-                      <div className="w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center font-bold justify-center text-xs">
-                        {patient.fullName.slice(0, 2).toUpperCase()}
+                    <td className="block px-0 py-3 font-medium text-gray-800 sm:table-cell sm:px-4 sm:py-4">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className="w-24 shrink-0 text-xs font-semibold text-gray-500 sm:hidden">
+                          Patient
+                        </span>
+                        <div className="w-9 h-9 shrink-0 rounded-full bg-emerald-100 text-emerald-700 flex items-center font-bold justify-center text-xs">
+                          {patient.fullName.slice(0, 2).toUpperCase()}
+                        </div>
+                        <span className="min-w-0 break-words">
+                          {patient.fullName}
+                        </span>
                       </div>
-                      <span className="break-words">{patient.fullName}</span>
+                    </td>
+                    <td className="block px-0 py-3 text-gray-600 sm:table-cell sm:px-4 sm:py-4">
+                      <div className="flex items-center gap-3">
+                        <span className="w-24 shrink-0 text-xs font-semibold text-gray-500 sm:hidden">
+                          Gender
+                        </span>
+                        <span>{patient.personalInfo?.gender || "Not specified"}</span>
                       </div>
                     </td>
-                    <td className="py-4 px-4 text-gray-600">
-                      {patient.personalInfo?.gender || "Not specified"}
+                    <td className="block px-0 py-3 text-gray-600 sm:table-cell sm:px-4 sm:py-4">
+                      <div className="flex items-center gap-3">
+                        <span className="w-24 shrink-0 text-xs font-semibold text-gray-500 sm:hidden">
+                          Birth Date
+                        </span>
+                        <span>{patient.personalInfo?.birthDate || "Not specified"}</span>
+                      </div>
                     </td>
-                    <td className="py-4 px-4 text-gray-600">
-                      {patient.personalInfo?.birthDate || "Not specified"}
-                    </td>
-                    <td className="py-4 px-2 sm:px-4">
+                    <td className="block px-0 py-3 sm:table-cell sm:px-4 sm:py-4">
+                      <div className="flex items-center gap-3 sm:block">
+                        <span className="w-24 shrink-0 text-xs font-semibold text-gray-500 sm:hidden">
+                          Actions
+                        </span>
                       <button
                         type="button"
                         onClick={() => onSelectPatient(patient.id)}
@@ -82,6 +101,7 @@ export const PatientListPage: React.FC<PatientListPageProps> = ({
                       >
                         View Profile & Care Plan
                       </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

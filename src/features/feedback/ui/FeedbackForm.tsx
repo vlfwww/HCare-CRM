@@ -35,6 +35,9 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({
         <img
           src={feedbackBGR}
           alt="Feedback banner"
+          loading="eager"
+          fetchPriority="high"
+          decoding="sync"
           className="w-full h-full object-cover"
         />
       </div>

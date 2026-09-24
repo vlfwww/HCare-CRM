@@ -33,6 +33,17 @@ export const EditDoctorProfileModal: React.FC<EditDoctorProfileModalProps> = ({
     setFormData(initialData);
   }, [initialData]);
 
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

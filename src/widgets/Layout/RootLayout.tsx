@@ -10,7 +10,7 @@ export const RootLayout: React.FC = () => {
     <div className="min-h-screen bg-gray-100 flex flex-col font-manrope">
       <Header onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)} />
 
-      <div className="flex flex-1 overflow-hidden relative">
+      <div className="relative flex flex-1 overflow-x-hidden">
         <Sidebar
           isOpen={isSidebarOpen}
           onClose={() => setIsSidebarOpen(false)}

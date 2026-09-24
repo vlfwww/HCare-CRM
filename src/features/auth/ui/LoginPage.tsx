@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import {
-  signInWithEmailAndPassword,
-} from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/app/providers/firebase";
 import { signInWithGoogle } from "../model/useGoogleAuth";
 import { getAuthErrorMessage } from "../model/authError";
@@ -45,24 +43,24 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 font-manrope">
-      <div className="max-w-md w-full bg-white rounded-2xl border border-gray-200 p-8 shadow-xs">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-8 font-manrope">
+      <div className="max-w-md w-full bg-white rounded-2xl border border-gray-200 p-6 sm:p-8 shadow-xs">
         <div className="flex flex-col items-center mb-6">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3">
+          <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 shrink-0">
             <Activity className="w-6 h-6" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight text-center">
             Sign in to HCare
           </h1>
-          <p className="text-sm text-gray-400 mt-1">
+          <p className="text-xs sm:text-sm text-gray-400 mt-1 text-center">
             Enter your credentials to access your account
           </p>
         </div>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-100 rounded-xl text-red-600 text-sm flex items-center gap-2">
+          <div className="mb-4 p-3 bg-red-50 border border-red-100 rounded-xl text-red-600 text-xs sm:text-sm flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0" />
-            <span>{error}</span>
+            <span className="break-words">{error}</span>
           </div>
         )}
 
@@ -125,7 +123,7 @@ export const LoginPage: React.FC = () => {
             <Loader2 className="w-5 h-5 animate-spin text-gray-500" />
           ) : (
             <>
-              <svg className="w-5 h-5" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
                 <path
                   fill="#4285F4"
                   d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"
@@ -143,12 +141,12 @@ export const LoginPage: React.FC = () => {
                   d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.24 0 3.15 2.64 1.15 6.62l4.12 3.14c.95-2.85 3.6-4.96 6.73-4.96z"
                 />
               </svg>
-              <span>Sign in with Google</span>
+              <span className="truncate">Sign in with Google</span>
             </>
           )}
         </button>
 
-        <p className="text-center text-sm text-gray-500 mt-6">
+        <p className="text-center text-xs sm:text-sm text-gray-500 mt-6">
           Don't have an account?{" "}
           <Link
             to="/register"

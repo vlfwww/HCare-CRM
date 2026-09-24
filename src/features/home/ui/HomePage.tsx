@@ -24,7 +24,7 @@ export const Home: React.FC = () => {
         </p>
 
         <div className="flex flex-wrap justify-center gap-3 sm:gap-4 min-h-12">
-          {loading || !user ? (
+          {!user ? (
             <Link
               to="/login"
               aria-busy={loading}
@@ -33,7 +33,7 @@ export const Home: React.FC = () => {
               <span>{loading ? "Sign In" : "Sign In to Continue"}</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
-          ) : !loading && isDoctor ? (
+          ) : isDoctor ? (
             <Link
               to="/profile"
               className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-700 text-white rounded-xl font-semibold text-sm hover:bg-emerald-800 transition-colors shadow-sm cursor-pointer shadow-emerald-700/20"
@@ -41,7 +41,7 @@ export const Home: React.FC = () => {
               <span>Open Doctor Profile</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
-          ) : !loading ? (
+          ) : (
             <Link
               to="/medical-staff"
               className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-700 text-white rounded-xl font-semibold text-sm hover:bg-emerald-800 transition-colors shadow-sm cursor-pointer shadow-emerald-700/20"
@@ -49,7 +49,7 @@ export const Home: React.FC = () => {
               <span>Open Medical Staff</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
-          ) : null}
+          )}
         </div>
       </div>
     </div>

@@ -9,9 +9,12 @@ interface StaffRowProps {
 
 export const StaffRow: React.FC<StaffRowProps> = ({ person, onBook }) => {
   return (
-    <tr className="hover:bg-gray-50/50 transition-colors">
-      <td className="py-4 px-6">
+    <tr className="block p-4 hover:bg-gray-50/50 transition-colors sm:table-row sm:p-0">
+      <td className="block px-0 py-3 sm:table-cell sm:px-6 sm:py-4">
         <div className="flex items-center gap-3">
+          <span className="w-28 shrink-0 text-xs font-semibold text-gray-500 sm:hidden">
+            Name
+          </span>
           {person.avatarUrl ? (
             <img
               src={person.avatarUrl}
@@ -23,45 +26,69 @@ export const StaffRow: React.FC<StaffRowProps> = ({ person, onBook }) => {
               {person.name?.[0] || "D"}
             </div>
           )}
-          <div>
-            <p className="text-sm font-semibold text-gray-800">{person.name}</p>
-            <p className="text-xs text-gray-400">{person.role}</p>
+          <div className="min-w-0">
+            <p className="break-words text-sm font-semibold text-gray-800">
+              {person.name}
+            </p>
+            <p className="break-words text-xs text-gray-400">{person.role}</p>
           </div>
         </div>
       </td>
 
-      <td className="py-4 px-4 text-xs text-gray-600">
-        <div>{person.hospital || "—"}</div>
-        <div className="text-gray-400 text-[11px] mt-0.5">
-          {person.location || ""}
+      <td className="block px-0 py-3 text-xs text-gray-600 sm:table-cell sm:px-4 sm:py-4">
+        <div className="flex items-start gap-3 sm:block">
+          <span className="w-28 shrink-0 text-xs font-semibold text-gray-500 sm:hidden">
+            City/Country
+          </span>
+          <div>
+            <div>{person.hospital || "—"}</div>
+            <div className="mt-0.5 text-[11px] text-gray-400">
+              {person.location || ""}
+            </div>
+          </div>
         </div>
       </td>
 
-      <td className="py-4 px-4 text-xs text-gray-600 font-medium">
-        {person.availableHours || "—"}
+      <td className="block px-0 py-3 text-xs font-medium text-gray-600 sm:table-cell sm:px-4 sm:py-4">
+        <div className="flex items-center gap-3 sm:block">
+          <span className="w-28 shrink-0 text-xs font-semibold text-gray-500 sm:hidden">
+            Available hours
+          </span>
+          <span>{person.availableHours || "—"}</span>
+        </div>
       </td>
 
-      <td className="py-4 px-4">
-        <button
-          onClick={onBook}
-          className="flex items-center gap-2 text-emerald-600 hover:text-emerald-700 text-xs font-medium transition-colors cursor-pointer bg-transparent border-none p-0"
-        >
-          <CalendarPlus className="w-4 h-4 text-emerald-500" />
-          <span>Book date</span>
-        </button>
+      <td className="block px-0 py-3 sm:table-cell sm:px-4 sm:py-4">
+        <div className="flex items-center gap-3 sm:block">
+          <span className="w-28 shrink-0 text-xs font-semibold text-gray-500 sm:hidden">
+            Appointment
+          </span>
+          <button
+            onClick={onBook}
+            className="flex items-center gap-2 border-none bg-transparent p-0 text-xs font-medium text-emerald-600 transition-colors hover:text-emerald-700 cursor-pointer"
+          >
+            <CalendarPlus className="h-4 w-4 text-emerald-500" />
+            <span>Book date</span>
+          </button>
+        </div>
       </td>
 
-      <td className="py-4 px-4 text-xs">
-        <span
-          className={`font-semibold ${
-            person.confirmation === "Confirmed" ||
-            person.confirmation === "Active"
-              ? "text-emerald-500"
-              : "text-amber-500"
-          }`}
-        >
-          {person.confirmation || "Active"}
-        </span>
+      <td className="block px-0 py-3 text-xs sm:table-cell sm:px-4 sm:py-4">
+        <div className="flex items-center gap-3 sm:block">
+          <span className="w-28 shrink-0 text-xs font-semibold text-gray-500 sm:hidden">
+            Confirmation
+          </span>
+          <span
+            className={`font-semibold ${
+              person.confirmation === "Confirmed" ||
+              person.confirmation === "Active"
+                ? "text-emerald-500"
+                : "text-amber-500"
+            }`}
+          >
+            {person.confirmation || "Active"}
+          </span>
+        </div>
       </td>
     </tr>
   );

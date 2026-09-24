@@ -48,9 +48,9 @@ export const MedicalStaffPage: React.FC = () => {
         </div>
 
         <div className="bg-white rounded-xl border border-gray-200 shadow-2xs overflow-hidden">
-          <div className="overflow-x-hidden">
-            <table className="w-full table-fixed text-left">
-              <thead>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead className="hidden sm:table-header-group">
                 <tr className="bg-gray-50/70 text-gray-600 text-xs font-semibold border-b border-gray-100">
                   <th className="py-3.5 px-3 sm:px-6">Name</th>
                   <th className="py-3.5 px-3 sm:px-4">City/Country</th>
@@ -59,7 +59,7 @@ export const MedicalStaffPage: React.FC = () => {
                   <th className="py-3.5 px-4">Confirmation</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="block divide-y divide-gray-100 sm:table-row-group">
                 {isLoading && (
                   <tr>
                     <td colSpan={5} className="py-12 text-center text-gray-400">

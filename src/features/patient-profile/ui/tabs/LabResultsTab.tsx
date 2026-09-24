@@ -128,9 +128,9 @@ export const LabResultsTab: React.FC<LabResultsTabProps> = ({
       )}
 
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div className="overflow-x-hidden">
+        <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead>
+            <thead className="hidden sm:table-header-group">
               <tr className="bg-gray-50/70 text-gray-600 border-y border-gray-100">
                 <th className="py-3 px-6 font-medium">Title</th>
                 <th className="py-3 px-4 font-medium">Date</th>
@@ -138,7 +138,7 @@ export const LabResultsTab: React.FC<LabResultsTabProps> = ({
                 <th className="py-3 px-4 font-medium">Results / Details</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="block divide-y divide-gray-100 sm:table-row-group">
               {surveys.length === 0 ? (
                 <tr>
                   <td colSpan={4} className="py-8 text-center text-gray-600">
@@ -149,31 +149,35 @@ export const LabResultsTab: React.FC<LabResultsTabProps> = ({
                 surveys.map((item) => (
                   <tr
                     key={item.id}
-                    className="hover:bg-gray-50/50 transition-colors"
+                    className="block p-4 hover:bg-gray-50/50 transition-colors sm:table-row sm:p-0"
                   >
-                    <td className="py-4 px-6 text-gray-800 font-medium">
-                      {item.title}
+                    <td className="block px-0 py-3 text-gray-800 font-medium sm:table-cell sm:px-6 sm:py-4">
+                      <div className="flex items-start gap-3">
+                        <span className="w-24 shrink-0 text-xs font-semibold text-gray-500 sm:hidden">Title</span>
+                        <span className="min-w-0 break-words">{item.title}</span>
+                      </div>
                     </td>
-                    <td className="py-4 px-4 text-gray-600 font-medium">
-                      {item.completedDate || "—"}
+                    <td className="block px-0 py-3 text-gray-600 font-medium sm:table-cell sm:px-4 sm:py-4">
+                      <div className="flex items-center gap-3">
+                        <span className="w-24 shrink-0 text-xs font-semibold text-gray-500 sm:hidden">Date</span>
+                        <span>{item.completedDate || "—"}</span>
+                      </div>
                     </td>
-                    <td className="py-4 px-4 text-gray-600">
-                      {item.status ? (
-                        <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded inline-block">
-                          {item.status}
-                        </span>
-                      ) : (
-                        <span className="text-gray-400">—</span>
-                      )}
+                    <td className="block px-0 py-3 text-gray-600 sm:table-cell sm:px-4 sm:py-4">
+                      <div className="flex items-center gap-3">
+                        <span className="w-24 shrink-0 text-xs font-semibold text-gray-500 sm:hidden">Status</span>
+                        {item.status ? (
+                          <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded inline-block">{item.status}</span>
+                        ) : <span className="text-gray-400">—</span>}
+                      </div>
                     </td>
-                    <td className="py-4 px-4 text-gray-600">
-                      {item.details ? (
-                        <span className="bg-emerald-50 text-emerald-700 px-2 py-1 rounded border border-emerald-100 inline-block">
-                          {item.details}
-                        </span>
-                      ) : (
-                        <span className="text-gray-400">—</span>
-                      )}
+                    <td className="block px-0 py-3 text-gray-600 sm:table-cell sm:px-4 sm:py-4">
+                      <div className="flex items-start gap-3">
+                        <span className="w-24 shrink-0 text-xs font-semibold text-gray-500 sm:hidden">Results</span>
+                        {item.details ? (
+                          <span className="min-w-0 break-words bg-emerald-50 text-emerald-700 px-2 py-1 rounded border border-emerald-100 inline-block">{item.details}</span>
+                        ) : <span className="text-gray-400">—</span>}
+                      </div>
                     </td>
                   </tr>
                 ))
